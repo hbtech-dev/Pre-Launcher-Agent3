@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You're Offline | Agent3</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(to bottom, #F3F4FF 0%, #ffffff 50%, #F9FAFB 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background-color: rgba(112, 59, 247, 0.1);
+            font-size: 12px;
+            font-weight: 600;
+            color: #703BF7;
+            margin-bottom: 20px;
+        }
+        
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #F97316;
+            margin-right: 8px;
+        }
+        
+        .icon-box {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e9d5ff;
+            font-size: 32px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+        
+        .description {
+            font-size: 16px;
+            color: #6B7280;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        
+        .sub-text {
+            font-size: 13px;
+            color: #9CA3AF;
+            margin-bottom: 32px;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            width: 100%;
+            max-width: 200px;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: #703BF7;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #5a30c5;
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: #374151;
+            border: 1px solid rgba(112, 59, 247, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #F9FAFB;
+        }
+        
+        @media (min-width: 640px) {
+            .button-group {
+                flex-direction: row;
+            }
+            
+            .btn {
+                width: auto;
+            }
+            
+            h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="badge">
+            <span class="badge-dot"></span>
+            Connection lost
+        </div>
+        
+        <div class="icon-box">
+            📶
+        </div>
+        
+        <h1>You're offline</h1>
+        
+        <p class="description">
+            It looks like your internet connection is unstable. Some pages and live data won't load until you're back online.
+        </p>
+        
+        <p class="sub-text">
+            Once your connection is restored, we'll refresh automatically when you try again.
+        </p>
+        
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="window.location.reload()">
+                Retry connection
+            </button>
+            <a href="/" class="btn btn-secondary">
+                Go to homepage
+            </a>
+        </div>
+    </div>
+</body>
+</html>
