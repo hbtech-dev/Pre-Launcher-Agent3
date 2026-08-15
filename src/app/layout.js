@@ -2,14 +2,92 @@ import './globals.css';
 import './pre-launcher.css';
 
 export const metadata = {
-  title: 'Agent3 — Pre-Launcher App',
-  description: "Pakistan's Smartest Real Estate Platform Pre-Launch Portal",
+  metadataBase: new URL('https://agent3.pk'),
+  title: {
+    default: "Agent3 — Pakistan's Next-Gen Real Estate Ecosystem",
+    template: "%s | Agent3 Pre-Launcher"
+  },
+  description: "Join Pakistan's premier PropTech ecosystem. Verified real estate agents, interactive society plot masterplans, AI valuations, and early access VIP perks.",
+  keywords: [
+    "Agent3",
+    "Real Estate Pakistan",
+    "Islamabad Real Estate",
+    "Rawalpindi Properties",
+    "Lahore Properties",
+    "Karachi Properties",
+    "Verified Real Estate Agents",
+    "PropTech Pakistan",
+    "Agent KYC Registration",
+    "Plot Masterplans",
+    "Society Dimension Maps"
+  ],
+  authors: [{ name: "Agent3 Technologies", url: "https://agent3.pk" }],
+  creator: "Agent3 Technologies Ltd.",
+  publisher: "Agent3",
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/icon.png', type: 'image/png' }
+    ],
+    apple: [
+      { url: '/icon.png' }
+    ],
+    shortcut: ['/favicon.ico']
+  },
+  openGraph: {
+    title: "Agent3 — Early Access Pre-Launcher Portal",
+    description: "Join Pakistan's smartest real estate network. Verified agents, instant buyer leads, and interactive society maps.",
+    url: "https://agent3.pk",
+    siteName: "Agent3 PropTech",
+    images: [
+      {
+        url: "/LOGO COLOR.png",
+        width: 1200,
+        height: 630,
+        alt: "Agent3 Logo"
+      }
+    ],
+    locale: "en_US",
+    type: "website"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Agent3 — Next-Gen Real Estate Early Access",
+    description: "Pakistan's Next-Gen Real Estate Ecosystem. Complete KYC, verified listings, and early perks.",
+    images: ["/LOGO COLOR.png"]
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    }
+  }
+};
+
+export const viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#07090e' }
+  ],
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/icon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/icon.png" />
+      </head>
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }
