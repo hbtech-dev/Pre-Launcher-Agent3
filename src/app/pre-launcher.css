@@ -546,6 +546,41 @@
   margin-top: 5px;
 }
 
+.pl-countdown-sep {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--pl-accent-primary);
+  align-self: center;
+  margin: 0 2px;
+}
+
+/* Compact version for top header card */
+.pl-countdown--compact {
+  margin: 0 !important;
+  gap: 6px !important;
+}
+
+.pl-countdown--compact .pl-countdown-unit {
+  min-width: 46px !important;
+  padding: 6px 4px !important;
+  border-radius: 10px !important;
+}
+
+.pl-countdown--compact .pl-countdown-value {
+  font-size: 17px !important;
+}
+
+.pl-countdown--compact .pl-countdown-label {
+  font-size: 8px !important;
+  margin-top: 2px !important;
+}
+
+.pl-countdown--compact .pl-countdown-sep {
+  font-size: 13px !important;
+  color: var(--pl-text-muted) !important;
+}
+
+
 /* ---- Welcome Page — Minimal Role Cards ---- */
 .pl-welcome-card {
   display: flex;

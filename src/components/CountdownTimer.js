@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 
-export default function CountdownTimer({ targetDate }) {
+export default function CountdownTimer({ targetDate, compact = false }) {
     const calcRemaining = useCallback(() => {
         const now = new Date().getTime();
         const target = new Date(targetDate).getTime();
@@ -24,7 +24,7 @@ export default function CountdownTimer({ targetDate }) {
     const pad = (n) => String(n).padStart(2, "0");
 
     return (
-        <div className="pl-countdown pl-stagger-3">
+        <div className={`pl-countdown ${compact ? "pl-countdown--compact" : ""} pl-stagger-3`}>
             <div className="pl-countdown-unit">
                 <span className="pl-countdown-value">{pad(time.days)}</span>
                 <span className="pl-countdown-label">Days</span>

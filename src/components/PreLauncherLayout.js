@@ -27,7 +27,7 @@ export default function PreLauncherLayout({ children, showBack = false, backUrl 
             <div className={`pl-container ${wide ? "pl-container--dashboard" : ""}`} style={{ position: "relative", zIndex: 1 }}>
                 {/* Top Header Bar with Logo and Theme Switch */}
                 <header className="pl-topbar">
-                    <Link href="/welcome" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
+                    <div className="flex items-center gap-2 select-none">
                         <Image
                             src="/LOGO COLOR.png"
                             alt="Agent3 Logo"
@@ -36,7 +36,7 @@ export default function PreLauncherLayout({ children, showBack = false, backUrl 
                             className="object-contain"
                             priority
                         />
-                    </Link>
+                    </div>
 
                     {/* Light / Dark Mode Toggle Pill */}
                     <div className="pl-theme-switch" role="group" aria-label="Theme Switcher">

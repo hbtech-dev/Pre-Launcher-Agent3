@@ -14,7 +14,6 @@ import {
     Sparkles,
     Building2,
     MapPin,
-    Gift,
     Bell,
     Users,
     Activity,
@@ -22,8 +21,7 @@ import {
     Share2,
     Mail,
     Send,
-    TrendingUp,
-    RefreshCw
+    TrendingUp
 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -69,6 +67,8 @@ export default function HomePage() {
     const [user, setUser] = useState({});
     const [role, setRole] = useState("user");
     const [copied, setCopied] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
     const [liveStats, setLiveStats] = useState({
         totalUsers: null,
         verifiedAgents: null,
@@ -83,10 +83,15 @@ export default function HomePage() {
         const session = secureStorage.getUserSession();
         const profile = secureStorage.getUserProfile?.() || {};
 
-        if (session) {
-            setRole(session.userType || session.role || "user");
-            setUser(profile);
+        if (!session || !session.token) {
+            router.replace("/welcome");
+            return;
         }
+
+        setIsAuthenticated(true);
+        setIsCheckingAuth(false);
+        setRole(session.userType || session.role || "user");
+        setUser(profile);
 
         // Fetch real-time live platform statistics from database
         const fetchLiveStats = async () => {
@@ -103,7 +108,7 @@ export default function HomePage() {
         };
 
         fetchLiveStats();
-    }, []);
+    }, [router]);
 
     const handleLogout = () => {
         secureStorage.clearAll?.();
@@ -121,7 +126,7 @@ export default function HomePage() {
 
     const displayName = user.fullName || user.name || (role === "agent" ? "Verified Agent" : "Valued Member");
     const displayEmail = user.email || "Registered Member";
-    const displayCity = user.operatingCity || user.location || (user.residentialAddress?.permanent ? user.residentialAddress.permanent.split(",").pop().trim() : "Pakistan");
+    const displayCity = user.operatingCity || user.location || (user.residentialAddress?.permanent ? user.residentialAddress.permanent.split(",").pop().trim() : "Islamabad / Rawalpindi");
 
     // Dynamic metrics based on REAL database values
     const metrics = [
@@ -163,13 +168,27 @@ export default function HomePage() {
         },
     ];
 
+    if (isCheckingAuth || !isAuthenticated) {
+        return (
+            <PreLauncherLayout wide={true}>
+                <div className="flex-1 flex items-center justify-center min-h-[50vh]">
+                    <div className="flex flex-col items-center gap-3">
+                        <div className="w-8 h-8 rounded-full border-2 border-[#8C56FC] border-t-transparent animate-spin" />
+                        <span className="text-xs text-[var(--pl-text-muted)] font-medium">Verifying authorization...</span>
+                    </div>
+                </div>
+            </PreLauncherLayout>
+        );
+    }
+
     return (
         <PreLauncherLayout wide={true}>
             <Toaster position="top-center" />
             <div className="flex-1 flex flex-col py-2 space-y-6">
 
-                {/* Top Welcome Header Card */}
-                <div className="pl-glass-card p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                {/* Top Profile Card with Embedded Countdown Timer */}
+                <div className="pl-glass-card p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+                    {/* Left: User / Agent Info */}
                     <div className="flex items-center gap-4">
                         <div
                             className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-white font-semibold text-xl shadow-lg flex-shrink-0"
@@ -208,27 +227,34 @@ export default function HomePage() {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2.5 self-start md:self-auto">
-                        <button
-                            type="button"
-                            onClick={handleShare}
-                            className="pl-btn pl-btn-outline"
-                            style={{ width: "auto", padding: "9px 16px", fontSize: "13px" }}
-                        >
-                            <Share2 className="w-4 h-4 text-[#8C56FC]" />
-                            <span>{copied ? "Link Copied!" : "Invite Friends"}</span>
-                        </button>
+                    {/* Right: Embedded Live Countdown Timer & Actions */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 lg:self-center">
+                        <div className="flex flex-col items-start sm:items-end justify-center">
+                            <CountdownTimer targetDate={LAUNCH_DATE} compact={true} />
+                        </div>
 
-                        <button
-                            type="button"
-                            onClick={handleLogout}
-                            className="pl-btn pl-btn-outline"
-                            style={{ width: "auto", padding: "9px 16px", fontSize: "13px" }}
-                            title="Sign Out"
-                        >
-                            <LogOut className="w-4 h-4 text-red-400" />
-                            <span>Sign Out</span>
-                        </button>
+                        <div className="flex items-center gap-2 self-stretch sm:self-auto pt-2 sm:pt-0 sm:border-l sm:border-[var(--pl-border-subtle)] sm:pl-4">
+                            <button
+                                type="button"
+                                onClick={handleShare}
+                                className="pl-btn pl-btn-outline flex-1 sm:flex-initial"
+                                style={{ width: "auto", padding: "8px 14px", fontSize: "12px" }}
+                            >
+                                <Share2 className="w-3.5 h-3.5 text-[#8C56FC]" />
+                                <span>{copied ? "Copied!" : "Invite"}</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={handleLogout}
+                                className="pl-btn pl-btn-outline flex-1 sm:flex-initial"
+                                style={{ width: "auto", padding: "8px 14px", fontSize: "12px" }}
+                                title="Sign Out"
+                            >
+                                <LogOut className="w-3.5 h-3.5 text-red-400" />
+                                <span>Sign Out</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -270,31 +296,6 @@ export default function HomePage() {
 
                     {/* Left Main Column (7 Cols on desktop) */}
                     <div className="lg:col-span-7 space-y-6">
-
-                        {/* Launch Countdown Banner */}
-                        <div className="pl-glass-card p-6 relative overflow-hidden">
-                            <div className="flex items-center justify-between mb-3">
-                                <div
-                                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold"
-                                    style={{ background: "rgba(140, 86, 252, 0.12)", color: "#8C56FC" }}
-                                >
-                                    <Sparkles className="w-3.5 h-3.5" />
-                                    <span>Official App Launch Target</span>
-                                </div>
-                                <span className="text-xs font-medium text-[#10b981] flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse" /> Live Server Connected
-                                </span>
-                            </div>
-
-                            <h2 className="text-lg sm:text-xl font-semibold text-[var(--pl-text-primary)] mb-1">
-                                Countdown to Mobile & Web Release
-                            </h2>
-                            <p className="text-xs sm:text-sm text-[var(--pl-text-secondary)] mb-4">
-                                Early registered members will receive priority onboarding notifications and promotional zero-brokerage access.
-                            </p>
-
-                            <CountdownTimer targetDate={LAUNCH_DATE} />
-                        </div>
 
                         {/* Development Progress Roadmap */}
                         <div className="pl-glass-card p-6">
