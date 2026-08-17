@@ -1,9 +1,14 @@
 const PRIMARY_API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backend-server-agent3-production.up.railway.app';
 const LOCAL_FALLBACK_URL = 'http://localhost:3006';
 
+function getBaseUrl() {
+  const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  return isLocal ? LOCAL_FALLBACK_URL : PRIMARY_API_URL;
+}
+
 async function performRequest(endpoint, body) {
   const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-  
+
   // 1. Try Primary API Server
   try {
     const res = await fetch(`${PRIMARY_API_URL}${endpoint}`, {
@@ -12,11 +17,11 @@ async function performRequest(endpoint, body) {
       body: JSON.stringify(body)
     });
     const data = await res.json();
-    
+
     if (data.status === 'success' || data.status === '2fa_required') {
       return data;
     }
-    
+
     // If running locally and primary returned error, try local backend server
     if (isLocal && PRIMARY_API_URL !== LOCAL_FALLBACK_URL) {
       try {
@@ -33,7 +38,7 @@ async function performRequest(endpoint, body) {
         // Fallback to primary response
       }
     }
-    
+
     return data;
   } catch (err) {
     // If primary network failed and on local machine, try localhost:3006
@@ -43,6 +48,55 @@ async function performRequest(endpoint, body) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
+        });
+        return await localRes.json();
+      } catch (localErr) {
+        return { status: 'error', message: 'Unable to connect to live or local backend server.' };
+      }
+    }
+    return { status: 'error', message: err.message || 'Network connection error' };
+  }
+}
+
+// Multipart form data upload (for KYC registration with file uploads)
+async function performMultipartRequest(endpoint, formData) {
+  const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+  // Try primary first
+  try {
+    const res = await fetch(`${PRIMARY_API_URL}${endpoint}`, {
+      method: 'POST',
+      body: formData // No Content-Type header — browser sets multipart boundary automatically
+    });
+    const data = await res.json();
+
+    if (data.status === 'success' || data.status === '2fa_required') {
+      return data;
+    }
+
+    // Try local fallback if on localhost
+    if (isLocal && PRIMARY_API_URL !== LOCAL_FALLBACK_URL) {
+      try {
+        const localRes = await fetch(`${LOCAL_FALLBACK_URL}${endpoint}`, {
+          method: 'POST',
+          body: formData
+        });
+        const localData = await localRes.json();
+        if (localData.status === 'success' || localData.status === '2fa_required') {
+          return localData;
+        }
+      } catch (localErr) {
+        // fallback
+      }
+    }
+
+    return data;
+  } catch (err) {
+    if (isLocal) {
+      try {
+        const localRes = await fetch(`${LOCAL_FALLBACK_URL}${endpoint}`, {
+          method: 'POST',
+          body: formData
         });
         return await localRes.json();
       } catch (localErr) {
@@ -76,11 +130,47 @@ export const agentAPI = {
     return performRequest('/api/v1/agent/login', body);
   },
 
-  register: async (agentData) => {
-    return performRequest('/api/v1/agent/register', agentData);
+  // KYC Registration — sends multipart/form-data to /api/v1/agent/kyc/register
+  register: async (formData) => {
+    return performMultipartRequest('/api/v1/agent/kyc/register', formData);
   },
 
   verifyLogin2FA: async (code, tempToken) => {
     return performRequest('/api/v1/agent/verify-login-2fa', { code, tempToken });
+  }
+};
+
+async function performGetRequest(endpoint) {
+  const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+  try {
+    const res = await fetch(`${PRIMARY_API_URL}${endpoint}`);
+    const data = await res.json();
+    if (data.status === 'success') return data;
+
+    if (isLocal && PRIMARY_API_URL !== LOCAL_FALLBACK_URL) {
+      try {
+        const localRes = await fetch(`${LOCAL_FALLBACK_URL}${endpoint}`);
+        const localData = await localRes.json();
+        if (localData.status === 'success') return localData;
+      } catch (e) {}
+    }
+    return data;
+  } catch (err) {
+    if (isLocal) {
+      try {
+        const localRes = await fetch(`${LOCAL_FALLBACK_URL}${endpoint}`);
+        return await localRes.json();
+      } catch (localErr) {
+        return { status: 'error', message: 'Unable to connect to server.' };
+      }
+    }
+    return { status: 'error', message: err.message || 'Network error' };
+  }
+}
+
+export const statsAPI = {
+  getStats: async () => {
+    return performGetRequest('/api/v1/public/stats');
   }
 };

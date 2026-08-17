@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Particles from "./Particles";
 
 export default function PreLauncherLayout({ children, showBack = false, backUrl = "/welcome", wide = false }) {
     const [theme, setTheme] = useState("dark");
@@ -22,7 +23,8 @@ export default function PreLauncherLayout({ children, showBack = false, backUrl 
 
     return (
         <div className={`pl-app pl-theme-${theme}`}>
-            <div className={`pl-container ${wide ? "pl-container--dashboard" : ""}`}>
+            <Particles />
+            <div className={`pl-container ${wide ? "pl-container--dashboard" : ""}`} style={{ position: "relative", zIndex: 1 }}>
                 {/* Top Header Bar with Logo and Theme Switch */}
                 <header className="pl-topbar">
                     <Link href="/welcome" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>

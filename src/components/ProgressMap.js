@@ -56,11 +56,11 @@ const MILESTONES = [
         title: "Mobile App Development",
         desc: "Native iOS & Android mobile applications with WebRTC voice/video calls, location-based lead discovery, and push notifications.",
         status: "active",
-        statusText: "In Progress (85%)",
+        statusText: "In Progress (80%)",
         icon: Smartphone,
         color: "#8C56FC",
         tags: ["iOS Native", "Android APK", "WebRTC Calling", "Push Notifications"],
-        completion: "85%"
+        completion: "80%"
     },
     {
         id: "phase-5",

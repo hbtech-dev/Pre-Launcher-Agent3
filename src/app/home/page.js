@@ -2,9 +2,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { secureStorage } from "@/utils/secureStorage";
+import { statsAPI } from "@/config/api";
 import PreLauncherLayout from "@/components/PreLauncherLayout";
 import CountdownTimer from "@/components/CountdownTimer";
-import GiftBox from "@/components/GiftBox";
+import DailyReward from "@/components/DailyReward";
 import ProgressMap from "@/components/ProgressMap";
 import {
     ShieldCheck,
@@ -19,23 +20,14 @@ import {
     Activity,
     Layers,
     Share2,
-    Smartphone,
     Mail,
-    Phone,
-    CreditCard,
-    CheckCircle2,
-    Send
+    Send,
+    TrendingUp,
+    RefreshCw
 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 const LAUNCH_DATE = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
-
-const METRICS = [
-    { label: "Early Signups", value: "14,850+", change: "+18% this week", icon: Users, color: "#8C56FC" },
-    { label: "Verified Agents", value: "920+", change: "Across 6 major cities", icon: ShieldCheck, color: "#FF8901" },
-    { label: "Mapped Societies", value: "450+", change: "Masterplans & Plots", icon: Layers, color: "#10b981" },
-    { label: "Platform Status", value: "94% Ready", change: "Final stress testing", icon: Activity, color: "#8C56FC" },
-];
 
 const ANNOUNCEMENTS = [
     {
@@ -77,6 +69,15 @@ export default function HomePage() {
     const [user, setUser] = useState({});
     const [role, setRole] = useState("user");
     const [copied, setCopied] = useState(false);
+    const [liveStats, setLiveStats] = useState({
+        totalUsers: null,
+        verifiedAgents: null,
+        totalAgents: null,
+        mappedSocieties: null,
+        totalProperties: null,
+        platformStatus: "80%"
+    });
+    const [loadingStats, setLoadingStats] = useState(true);
 
     useEffect(() => {
         const session = secureStorage.getUserSession();
@@ -86,6 +87,22 @@ export default function HomePage() {
             setRole(session.userType || session.role || "user");
             setUser(profile);
         }
+
+        // Fetch real-time live platform statistics from database
+        const fetchLiveStats = async () => {
+            try {
+                const res = await statsAPI.getStats();
+                if (res && res.status === "success" && res.data) {
+                    setLiveStats(res.data);
+                }
+            } catch (err) {
+                console.error("Live stats fetch error:", err);
+            } finally {
+                setLoadingStats(false);
+            }
+        };
+
+        fetchLiveStats();
     }, []);
 
     const handleLogout = () => {
@@ -102,21 +119,60 @@ export default function HomePage() {
         }
     };
 
-    const displayName = user.fullName || user.name || (role === "agent" ? "Verified Agent" : "Valued Customer");
+    const displayName = user.fullName || user.name || (role === "agent" ? "Verified Agent" : "Valued Member");
     const displayEmail = user.email || "Registered Member";
-    const displayPhone = user.phone || "Not provided";
-    const displayCity = user.operatingCity || user.location || (user.residentialAddress?.permanent ? user.residentialAddress.permanent.split(",").pop().trim() : "Islamabad / Rawalpindi");
+    const displayCity = user.operatingCity || user.location || (user.residentialAddress?.permanent ? user.residentialAddress.permanent.split(",").pop().trim() : "Pakistan");
+
+    // Dynamic metrics based on REAL database values
+    const metrics = [
+        {
+            label: "Early Signups",
+            value: liveStats.totalUsers !== null ? `${liveStats.totalUsers.toLocaleString()}` : "...",
+            change: "Real-time registered users",
+            icon: Users,
+            color: "#8C56FC",
+            bg: "rgba(140, 86, 252, 0.12)",
+            trend: "up"
+        },
+        {
+            label: "Verified Agents",
+            value: liveStats.verifiedAgents !== null ? `${liveStats.verifiedAgents.toLocaleString()}` : "...",
+            change: liveStats.totalAgents !== null ? `Out of ${liveStats.totalAgents} registered` : "KYC Approved Agents",
+            icon: ShieldCheck,
+            color: "#FF8901",
+            bg: "rgba(255, 137, 1, 0.12)",
+            trend: "up"
+        },
+        {
+            label: "Mapped Societies",
+            value: liveStats.mappedSocieties !== null ? `${liveStats.mappedSocieties.toLocaleString()}` : "...",
+            change: "Masterplans & Plots",
+            icon: Layers,
+            color: "#10b981",
+            bg: "rgba(16, 185, 129, 0.12)",
+            trend: "neutral"
+        },
+        {
+            label: "Platform Status",
+            value: "80% Ready",
+            change: "Phase 3: Testing & Polish",
+            icon: Activity,
+            color: "#38bdf8",
+            bg: "rgba(56, 189, 248, 0.12)",
+            trend: "live"
+        },
+    ];
 
     return (
         <PreLauncherLayout wide={true}>
             <Toaster position="top-center" />
             <div className="flex-1 flex flex-col py-2 space-y-6">
 
-                {/* Top Profile & Welcome Header Card */}
-                <div className="pl-glass-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                {/* Top Welcome Header Card */}
+                <div className="pl-glass-card p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                         <div
-                            className="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-semibold text-xl shadow-lg flex-shrink-0"
+                            className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-white font-semibold text-xl shadow-lg flex-shrink-0"
                             style={{
                                 background: role === "agent"
                                     ? "linear-gradient(135deg, #FF8901 0%, #d97000 100%)"
@@ -176,27 +232,32 @@ export default function HomePage() {
                     </div>
                 </div>
 
-                {/* Top Metrics Stat Bar */}
+                {/* Real Data Metrics Grid */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    {METRICS.map((stat, i) => {
+                    {metrics.map((stat, i) => {
                         const Icon = stat.icon;
                         return (
-                            <div key={i} className="pl-glass-card p-4 sm:p-5 flex flex-col justify-between hover:border-[#8C56FC] transition-all">
+                            <div
+                                key={i}
+                                className="pl-glass-card p-4 sm:p-5 flex flex-col justify-between hover:border-[#8C56FC] hover:shadow-lg transition-all"
+                            >
                                 <div className="flex items-center justify-between mb-2">
                                     <span className="text-xs font-medium text-[var(--pl-text-muted)]">{stat.label}</span>
                                     <div
-                                        className="w-8 h-8 rounded-lg flex items-center justify-center"
-                                        style={{ background: `${stat.color}18`, color: stat.color }}
+                                        className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                                        style={{ background: stat.bg, color: stat.color }}
                                     >
                                         <Icon className="w-4 h-4" />
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="text-xl sm:text-2xl font-semibold text-[var(--pl-text-primary)]">
+                                    <div className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--pl-text-primary)]">
                                         {stat.value}
                                     </div>
-                                    <div className="text-[11px] font-medium text-[var(--pl-text-secondary)] mt-0.5">
-                                        {stat.change}
+                                    <div className="flex items-center gap-1 text-[11px] font-medium text-[var(--pl-text-secondary)] mt-1">
+                                        {stat.trend === "up" && <TrendingUp className="w-3 h-3 text-emerald-400" />}
+                                        {stat.trend === "live" && <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse inline-block" />}
+                                        <span className="truncate">{stat.change}</span>
                                     </div>
                                 </div>
                             </div>
@@ -213,12 +274,14 @@ export default function HomePage() {
                         {/* Launch Countdown Banner */}
                         <div className="pl-glass-card p-6 relative overflow-hidden">
                             <div className="flex items-center justify-between mb-3">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold"
-                                     style={{ background: "rgba(140, 86, 252, 0.12)", color: "#8C56FC" }}>
+                                <div
+                                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold"
+                                    style={{ background: "rgba(140, 86, 252, 0.12)", color: "#8C56FC" }}
+                                >
                                     <Sparkles className="w-3.5 h-3.5" />
                                     <span>Official App Launch Target</span>
                                 </div>
-                                <span className="text-xs font-medium text-[#10b981] flex items-center gap-1">
+                                <span className="text-xs font-medium text-[#10b981] flex items-center gap-1.5">
                                     <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse" /> Live Server Connected
                                 </span>
                             </div>
@@ -233,7 +296,7 @@ export default function HomePage() {
                             <CountdownTimer targetDate={LAUNCH_DATE} />
                         </div>
 
-                        {/* Interactive Development Progress Map */}
+                        {/* Development Progress Roadmap */}
                         <div className="pl-glass-card p-6">
                             <div className="flex items-center justify-between mb-4">
                                 <div>
@@ -253,112 +316,37 @@ export default function HomePage() {
                             <ProgressMap />
                         </div>
 
-                        {/* Quick Feature Highlights */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="pl-glass-card p-5 hover:border-[#8C56FC] transition-colors">
-                                <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{ background: "rgba(140, 86, 252, 0.15)", color: "#8C56FC" }}>
-                                    <Smartphone className="w-5 h-5" />
+                        {/* Early Feedback & Support Card */}
+                        <div className="pl-glass-card p-5 bg-gradient-to-br from-[rgba(140,86,252,0.08)] to-[rgba(255,137,1,0.06)]">
+                            <div className="flex items-start justify-between gap-4">
+                                <div>
+                                    <h3 className="font-semibold text-sm text-[var(--pl-text-primary)] mb-1 flex items-center gap-2">
+                                        <Send className="w-4 h-4 text-[#8C56FC]" />
+                                        Have Early Feedback or Feature Requests?
+                                    </h3>
+                                    <p className="text-xs text-[var(--pl-text-secondary)] leading-relaxed">
+                                        Help us shape Agent3 into Pakistan&apos;s ultimate real estate platform. We review every community suggestion.
+                                    </p>
                                 </div>
-                                <h3 className="font-semibold text-sm text-[var(--pl-text-primary)] mb-1">
-                                    Native Mobile Apps
-                                </h3>
-                                <p className="text-xs text-[var(--pl-text-secondary)] leading-relaxed">
-                                    Instant push alerts on every new enquiry, call, and property price drop on Android & iOS.
-                                </p>
-                            </div>
-
-                            <div className="pl-glass-card p-5 hover:border-[#FF8901] transition-colors">
-                                <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{ background: "rgba(255, 137, 1, 0.15)", color: "#FF8901" }}>
-                                    <ShieldCheck className="w-5 h-5" />
-                                </div>
-                                <h3 className="font-semibold text-sm text-[var(--pl-text-primary)] mb-1">
-                                    100% Verified Listings
-                                </h3>
-                                <p className="text-xs text-[var(--pl-text-secondary)] leading-relaxed">
-                                    KYC-cleared real estate agents, verified land ownership records, and scam-free transactions.
-                                </p>
+                                <a
+                                    href="mailto:tpa.ofe@gmail.com?subject=Agent3 Pre-Launcher Feedback"
+                                    className="pl-btn pl-btn-outline text-xs flex-shrink-0"
+                                    style={{ width: "auto", padding: "8px 14px", textDecoration: "none" }}
+                                >
+                                    Contact Team →
+                                </a>
                             </div>
                         </div>
+
                     </div>
 
                     {/* Right Column (5 Cols on desktop) */}
                     <div className="lg:col-span-5 space-y-6">
 
-                        {/* Exact Profile Data Summary Card */}
-                        <div className="pl-glass-card p-5 border border-[#8C56FC]/30">
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="font-semibold text-sm text-[var(--pl-text-primary)] flex items-center gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-[#10b981]" />
-                                    Active Account Profile
-                                </h3>
-                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-500/10 text-green-500">
-                                    Live Sync
-                                </span>
-                            </div>
+                        {/* Interactive Daily Pre-Launch Rewards & Credit Vault */}
+                        <DailyReward role={role} />
 
-                            <div className="space-y-2 text-xs">
-                                <div className="flex justify-between py-1.5 border-b border-[var(--pl-border-subtle)]">
-                                    <span className="text-[var(--pl-text-muted)]">Full Name:</span>
-                                    <span className="font-medium text-[var(--pl-text-primary)]">{displayName}</span>
-                                </div>
-                                <div className="flex justify-between py-1.5 border-b border-[var(--pl-border-subtle)]">
-                                    <span className="text-[var(--pl-text-muted)]">Email:</span>
-                                    <span className="font-medium text-[var(--pl-text-primary)]">{displayEmail}</span>
-                                </div>
-                                {user.phone && (
-                                    <div className="flex justify-between py-1.5 border-b border-[var(--pl-border-subtle)]">
-                                        <span className="text-[var(--pl-text-muted)]">Phone:</span>
-                                        <span className="font-medium text-[var(--pl-text-primary)]">{user.phone}</span>
-                                    </div>
-                                )}
-                                {role === "agent" && (
-                                    <>
-                                        {user.cnicNumber && (
-                                            <div className="flex justify-between py-1.5 border-b border-[var(--pl-border-subtle)]">
-                                                <span className="text-[var(--pl-text-muted)]">CNIC:</span>
-                                                <span className="font-medium text-[var(--pl-text-primary)]">{user.cnicNumber}</span>
-                                            </div>
-                                        )}
-                                        {user.agencyName && (
-                                            <div className="flex justify-between py-1.5 border-b border-[var(--pl-border-subtle)]">
-                                                <span className="text-[var(--pl-text-muted)]">Agency:</span>
-                                                <span className="font-medium text-[var(--pl-text-primary)]">{user.agencyName}</span>
-                                            </div>
-                                        )}
-                                        {user.accountType && (
-                                            <div className="flex justify-between py-1.5 border-b border-[var(--pl-border-subtle)]">
-                                                <span className="text-[var(--pl-text-muted)]">Account Type:</span>
-                                                <span className="font-medium text-[var(--pl-text-primary)] capitalize">{user.accountType}</span>
-                                            </div>
-                                        )}
-                                    </>
-                                )}
-                                <div className="flex justify-between py-1.5">
-                                    <span className="text-[var(--pl-text-muted)]">Status:</span>
-                                    <span className="font-semibold text-[#10b981]">Active & Verified</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* VIP Gift Box Perk Card */}
-                        <div className="pl-glass-card p-6 text-center">
-                            <div className="flex items-center justify-between mb-4 text-left">
-                                <div>
-                                    <h2 className="text-base font-semibold text-[var(--pl-text-primary)] flex items-center gap-2">
-                                        <Gift className="w-5 h-5 text-[#FF8901]" />
-                                        VIP Early Access Box
-                                    </h2>
-                                    <p className="text-xs text-[var(--pl-text-secondary)] mt-0.5">
-                                        Tap the box below to claim early adopter rewards
-                                    </p>
-                                </div>
-                                <span className="pl-badge text-[10px]">Exclusive</span>
-                            </div>
-
-                            <GiftBox />
-                        </div>
-
-                        {/* Announcements / Admin Articles Feed */}
+                        {/* Announcements & Platform Live Feed */}
                         <div className="pl-glass-card p-6">
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-base font-semibold text-[var(--pl-text-primary)] flex items-center gap-2">
@@ -399,24 +387,6 @@ export default function HomePage() {
                                     </div>
                                 ))}
                             </div>
-                        </div>
-
-                        {/* Quick Community / Feedback Card */}
-                        <div className="pl-glass-card p-5 bg-gradient-to-br from-[rgba(140,86,252,0.1)] to-[rgba(255,137,1,0.08)]">
-                            <h3 className="font-semibold text-sm text-[var(--pl-text-primary)] mb-1 flex items-center gap-2">
-                                <Send className="w-4 h-4 text-[#8C56FC]" />
-                                Have Early Feedback?
-                            </h3>
-                            <p className="text-xs text-[var(--pl-text-secondary)] leading-relaxed mb-3">
-                                Help us shape Agent3 into Pakistan&apos;s ultimate real estate platform.
-                            </p>
-                            <a
-                                href="mailto:tpa.ofe@gmail.com?subject=Agent3 Pre-Launcher Feedback"
-                                className="pl-btn pl-btn-outline text-xs"
-                                style={{ width: "100%", padding: "10px 14px", textDecoration: "none" }}
-                            >
-                                Contact Founding Team →
-                            </a>
                         </div>
 
                     </div>

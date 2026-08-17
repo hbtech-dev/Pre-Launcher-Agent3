@@ -263,9 +263,9 @@ export default function AgentLoginPage() {
                 </div>
 
                 <p className="text-center mt-6 text-sm" style={{ color: "var(--pl-text-secondary)" }}>
-                    New Agent?{" "}
+                    Don&apos;t have an account?{" "}
                     <Link href="/agent/register" className="pl-link" style={{ color: "#FF8901" }}>
-                        Submit KYC & Register
+                        Register
                     </Link>
                 </p>
             </div>
