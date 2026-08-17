@@ -7,6 +7,7 @@ import PreLauncherLayout from "@/components/PreLauncherLayout";
 import CountdownTimer from "@/components/CountdownTimer";
 import DailyReward from "@/components/DailyReward";
 import ProgressMap from "@/components/ProgressMap";
+import LuckyWheel from "@/components/LuckyWheel";
 import {
     ShieldCheck,
     User,
@@ -187,11 +188,11 @@ export default function HomePage() {
             <div className="flex-1 flex flex-col py-2 space-y-6">
 
                 {/* Top Profile Card with Embedded Countdown Timer */}
-                <div className="pl-glass-card p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+                <div className="pl-glass-card p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-5 border border-[#8C56FC]/20 shadow-[0_12px_40px_rgba(0,0,0,0.4)]">
                     {/* Left: User / Agent Info */}
                     <div className="flex items-center gap-4">
                         <div
-                            className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-white font-semibold text-xl shadow-lg flex-shrink-0"
+                            className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-white font-semibold text-xl shadow-lg flex-shrink-0 ring-2 ring-[#8C56FC]/30"
                             style={{
                                 background: role === "agent"
                                     ? "linear-gradient(135deg, #FF8901 0%, #d97000 100%)"
@@ -206,7 +207,7 @@ export default function HomePage() {
                                     {displayName}
                                 </h1>
                                 <span
-                                    className="pl-badge text-xs px-2.5 py-1"
+                                    className="pl-badge text-xs px-2.5 py-1 font-semibold"
                                     style={{
                                         background: role === "agent" ? "rgba(255, 137, 1, 0.15)" : "rgba(140, 86, 252, 0.15)",
                                         color: role === "agent" ? "#FF8901" : "#8C56FC"
@@ -216,11 +217,11 @@ export default function HomePage() {
                                 </span>
                             </div>
                             <div className="flex items-center gap-3 text-xs sm:text-sm text-[var(--pl-text-secondary)] mt-1.5 flex-wrap">
-                                <span className="flex items-center gap-1">
+                                <span className="flex items-center gap-1.5 font-medium">
                                     <Mail className="w-3.5 h-3.5 text-[#8C56FC]" /> {displayEmail}
                                 </span>
                                 <span className="opacity-40">•</span>
-                                <span className="flex items-center gap-1">
+                                <span className="flex items-center gap-1.5 font-medium">
                                     <MapPin className="w-3.5 h-3.5 text-[#FF8901]" /> {displayCity}
                                 </span>
                             </div>
@@ -238,17 +239,17 @@ export default function HomePage() {
                                 type="button"
                                 onClick={handleShare}
                                 className="pl-btn pl-btn-outline flex-1 sm:flex-initial"
-                                style={{ width: "auto", padding: "8px 14px", fontSize: "12px" }}
+                                style={{ width: "auto", padding: "8px 16px", fontSize: "12px" }}
                             >
                                 <Share2 className="w-3.5 h-3.5 text-[#8C56FC]" />
-                                <span>{copied ? "Copied!" : "Invite"}</span>
+                                <span>{copied ? "Copied!" : "Invite Friends"}</span>
                             </button>
 
                             <button
                                 type="button"
                                 onClick={handleLogout}
                                 className="pl-btn pl-btn-outline flex-1 sm:flex-initial"
-                                style={{ width: "auto", padding: "8px 14px", fontSize: "12px" }}
+                                style={{ width: "auto", padding: "8px 16px", fontSize: "12px" }}
                                 title="Sign Out"
                             >
                                 <LogOut className="w-3.5 h-3.5 text-red-400" />
@@ -265,22 +266,22 @@ export default function HomePage() {
                         return (
                             <div
                                 key={i}
-                                className="pl-glass-card p-4 sm:p-5 flex flex-col justify-between hover:border-[#8C56FC] hover:shadow-lg transition-all"
+                                className="pl-glass-card p-4 sm:p-5 flex flex-col justify-between hover:border-[#8C56FC] hover:shadow-[0_12px_30px_rgba(140,86,252,0.18)] hover:-translate-y-1 transition-all duration-300"
                             >
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs font-medium text-[var(--pl-text-muted)]">{stat.label}</span>
+                                    <span className="text-xs font-semibold text-[var(--pl-text-muted)] tracking-wide">{stat.label}</span>
                                     <div
-                                        className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                                        className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"
                                         style={{ background: stat.bg, color: stat.color }}
                                     >
                                         <Icon className="w-4 h-4" />
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--pl-text-primary)]">
+                                    <div className="text-xl sm:text-2xl font-extrabold tracking-tight text-[var(--pl-text-primary)]">
                                         {stat.value}
                                     </div>
-                                    <div className="flex items-center gap-1 text-[11px] font-medium text-[var(--pl-text-secondary)] mt-1">
+                                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-[var(--pl-text-secondary)] mt-1">
                                         {stat.trend === "up" && <TrendingUp className="w-3 h-3 text-emerald-400" />}
                                         {stat.trend === "live" && <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse inline-block" />}
                                         <span className="truncate">{stat.change}</span>
@@ -400,6 +401,9 @@ export default function HomePage() {
                     </p>
                 </div>
             </div>
+
+            {/* Floating Lucky Spin Wheel */}
+            <LuckyWheel />
         </PreLauncherLayout>
     );
 }

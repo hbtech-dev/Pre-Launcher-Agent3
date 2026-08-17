@@ -758,4 +758,289 @@
   padding-bottom: 0;
 }
 
+/* ============================================================
+   MODERN UI ENHANCEMENTS — Crates, Modals, Vaults & Glows
+   ============================================================ */
+
+/* ---- Weekly Reward Crates ---- */
+.pl-crate-card {
+  position: relative;
+  border-radius: 18px;
+  padding: 18px 14px;
+  background: var(--pl-bg-card);
+  border: 1.5px solid var(--pl-border-subtle);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.pl-crate-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  transition: background 0.3s ease;
+}
+
+.pl-crate-card.claimed {
+  border-color: rgba(16, 185, 129, 0.45);
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, rgba(18, 24, 38, 0.6) 100%);
+}
+
+.pl-crate-card.claimed::before {
+  background: #10b981;
+}
+
+.pl-crate-card.active {
+  border-color: #8C56FC;
+  background: linear-gradient(180deg, rgba(140, 86, 252, 0.16) 0%, rgba(255, 137, 1, 0.06) 100%);
+  box-shadow:
+    0 12px 30px rgba(140, 86, 252, 0.22),
+    0 0 0 1px rgba(140, 86, 252, 0.25);
+  transform: translateY(-3px) scale(1.02);
+}
+
+.pl-crate-card.active::before {
+  background: linear-gradient(90deg, #8C56FC, #FF8901);
+}
+
+.pl-crate-card.locked {
+  opacity: 0.6;
+  background: var(--pl-bg-input);
+}
+
+.pl-crate-card:hover:not(.locked) {
+  transform: translateY(-4px);
+  border-color: #8C56FC;
+  box-shadow: 0 16px 36px rgba(140, 86, 252, 0.2);
+}
+
+/* ---- Shimmering Vault Capsule ---- */
+.pl-vault-capsule {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(140, 86, 252, 0.18) 0%, rgba(255, 137, 1, 0.14) 100%);
+  border: 1.5px solid rgba(140, 86, 252, 0.35);
+  box-shadow: 0 4px 20px rgba(140, 86, 252, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+}
+
+.pl-vault-capsule:hover {
+  border-color: #FF8901;
+  box-shadow: 0 6px 25px rgba(255, 137, 1, 0.25);
+  transform: translateY(-1px);
+}
+
+/* ---- Modern Celebration Modal ---- */
+.pl-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 9, 14, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: pl-fade-in 0.25s ease-out;
+}
+
+.pl-modal-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--pl-bg-card);
+  border: 1.5px solid rgba(140, 86, 252, 0.35);
+  border-radius: 24px;
+  padding: 32px 26px;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.65),
+    0 0 50px rgba(140, 86, 252, 0.2);
+  text-align: center;
+  position: relative;
+  animation: pl-modal-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes pl-modal-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.pl-modal-icon-ring {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(140, 86, 252, 0.25) 0%, rgba(255, 137, 1, 0.12) 70%, transparent 100%);
+  border: 2px solid rgba(140, 86, 252, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  box-shadow: 0 0 35px rgba(140, 86, 252, 0.35);
+  animation: pl-pulse-glow 2.5s infinite ease-in-out;
+}
+
+/* ---- Interactive Card Hover Glow ---- */
+.pl-card-interactive {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pl-card-interactive:hover {
+  transform: translateY(-2px);
+  border-color: rgba(140, 86, 252, 0.4);
+  box-shadow: 0 12px 32px rgba(140, 86, 252, 0.12);
+}
+
+/* ============================================================
+   LUCKY WHEEL — Floating Button, Circular Wheel & Glows
+   ============================================================ */
+
+.pl-wheel-floating-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px 10px 12px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #8C56FC 0%, #a855f7 50%, #FF8901 100%);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow:
+    0 8px 30px rgba(140, 86, 252, 0.5),
+    0 0 20px rgba(255, 137, 1, 0.4);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: pl-float-bounce 3s infinite ease-in-out;
+}
+
+.pl-wheel-floating-btn:hover {
+  transform: scale(1.08) translateY(-4px);
+  box-shadow:
+    0 12px 40px rgba(140, 86, 252, 0.7),
+    0 0 30px rgba(255, 137, 1, 0.6);
+}
+
+@keyframes pl-float-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.pl-wheel-badge-pulse {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  border: 2px solid #07090e;
+  animation: pl-pulse-glow 1.5s infinite;
+}
+
+/* Wheel Pointer / Needle */
+.pl-wheel-pointer {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
+  transition: transform 0.15s ease;
+}
+
+.pl-wheel-pointer.ticking {
+  animation: pl-needle-tick 0.2s ease-in-out;
+}
+
+@keyframes pl-needle-tick {
+  0%, 100% { transform: translateX(-50%) rotate(0deg); }
+  50% { transform: translateX(-50%) rotate(-12deg); }
+}
+
+/* Center Spin Knob Button */
+.pl-wheel-center-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #a855f7 0%, #8C56FC 60%, #581c87 100%);
+  border: 4px solid #facc15;
+  box-shadow:
+    0 0 25px rgba(140, 86, 252, 0.8),
+    inset 0 2px 6px rgba(255, 255, 255, 0.5),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  z-index: 15;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.pl-wheel-center-btn:hover:not(:disabled) {
+  transform: translate(-50%, -50%) scale(1.08);
+  box-shadow:
+    0 0 35px rgba(250, 204, 21, 0.9),
+    inset 0 2px 8px rgba(255, 255, 255, 0.7);
+}
+
+.pl-wheel-center-btn:active:not(:disabled) {
+  transform: translate(-50%, -50%) scale(0.95);
+}
+
+.pl-wheel-center-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Golden Outer Frame */
+.pl-wheel-rim {
+  border-radius: 50%;
+  border: 8px solid #eab308;
+  box-shadow:
+    0 0 40px rgba(234, 179, 8, 0.45),
+    0 0 80px rgba(140, 86, 252, 0.35),
+    inset 0 0 20px rgba(0, 0, 0, 0.7);
+  position: relative;
+  overflow: hidden;
+}
+
+
+
 
