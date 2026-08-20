@@ -22,44 +22,100 @@ import {
     Share2,
     Mail,
     Send,
-    TrendingUp
+    TrendingUp,
+    PhoneCall,
+    Bot,
+    Hotel,
+    Wallet,
+    LayoutDashboard,
+    PlaySquare,
+    CheckCircle2,
+    Zap,
+    ChevronDown,
+    ChevronUp,
+    Compass
 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 const LAUNCH_DATE = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
 
-const ANNOUNCEMENTS = [
+const PRIME_FEATURES = [
     {
-        icon: "📱",
-        title: "Agent3 Mobile App in Final Testing",
-        desc: "Native iOS & Android builds have entered closed internal beta. Push notification pipeline and WebRTC audio/video calling are fully operational.",
-        tag: "Mobile App",
+        id: "ai-concierge",
+        number: "01",
+        icon: Bot,
+        title: "AI Property Concierge & TrueProp™ Valuation",
+        tag: "AI Powered",
         badgeColor: "#8C56FC",
-        date: "Today"
+        status: "Live Intelligence",
+        desc: "Conversational AI assistant that understands your exact property needs, discovers tailored plots and homes instantly, and benchmarks property valuations with live market data.",
+        highlights: ["Natural Language Matchmaking", "Instant Plot Price Estimates", "24/7 AI Virtual Assistant"]
     },
     {
-        icon: "🤖",
-        title: "TrueProp Agent AI Assistant Integrated",
-        desc: "Automated real estate valuation and conversational lead qualifying engine powered by TrueProp intelligence is now live.",
-        tag: "AI Engine",
+        id: "webrtc-call",
+        number: "02",
+        icon: PhoneCall,
+        title: "Pakistan's 1st In-App Chat & Direct Audio Calling",
+        tag: "1st in Pakistan",
         badgeColor: "#FF8901",
-        date: "Yesterday"
+        status: "PropTech 1st",
+        desc: "End-to-end encrypted high-definition audio calling and real-time live chat connecting buyers, hosts, and verified partner agents directly within the app without revealing personal phone numbers.",
+        highlights: ["Zero Personal Number Sharing", "Encrypted HD Audio Calling", "Real-Time Direct Agent Chat"]
     },
     {
-        icon: "🗺️",
-        title: "Interactive Masterplan Maps for F-11 & DHA",
-        desc: "High-precision vector overlays and plot-by-plot data points available for Islamabad and Rawalpindi prime sectors.",
-        tag: "Maps System",
-        badgeColor: "#10b981",
-        date: "Aug 14"
-    },
-    {
-        icon: "💳",
-        title: "Bank-Grade In-App Escrow Wallet",
-        desc: "Secure end-to-end tokenized payment gateway configured for instant booking reservations and verified agent payouts.",
-        tag: "FinTech",
+        id: "verified-listings",
+        number: "03",
+        icon: ShieldCheck,
+        title: "100% Authentic & KYC-Verified Property Listings",
+        tag: "100% Verified",
         badgeColor: "#8C56FC",
-        date: "Aug 12"
+        status: "Zero Fake Inventory",
+        desc: "Every plot, residence, and commercial space is verified with authentic ownership records, precise dimension overlays, and strict admin KYC validation.",
+        highlights: ["Verified Partner Agent Badges", "Interactive Vector Society Maps", "Zero Duplicate Listings"]
+    },
+    {
+        id: "guest-stays",
+        number: "04",
+        icon: Hotel,
+        title: "Global Guest Stays & Hotel Room Bookings",
+        tag: "Airbnb Style",
+        badgeColor: "#8C56FC",
+        status: "Worldwide Stays",
+        desc: "Integrated short-term stays, boutique hotel reservations, luxury serviced suites, and vacation rentals with instant calendar checkouts and host verification.",
+        highlights: ["Instant Room Checkout", "Flexible Short & Long Stays", "Verified Check-in Protocols"]
+    },
+    {
+        id: "escrow-wallet",
+        number: "05",
+        icon: Wallet,
+        title: "Bank-Grade Escrow Vault & Smart Digital Wallet",
+        tag: "Escrow Guarded",
+        badgeColor: "#FF8901",
+        status: "Tokenized Security",
+        desc: "Protected in-app escrow wallet engineered for secure booking reservation tokens, digital property token deposits, and fraud-proof agent commission payouts.",
+        highlights: ["Tokenized Settlement Gateway", "Escrow Down Payments", "Instant Refund Protection"]
+    },
+    {
+        id: "agent-dashboard",
+        number: "06",
+        icon: LayoutDashboard,
+        title: "Agent Pro CRM & Modern VIP Command Suite",
+        tag: "VIP Pro Suite",
+        badgeColor: "#8C56FC",
+        status: "Enterprise Grade",
+        desc: "A futuristic real estate CRM built for top agencies: live buyer lead queues, automated listing analytics, society plot overlays, and VIP verified agent badges.",
+        highlights: ["Live Lead Queues & Inquiries", "Plot Coordinate Mapping Tools", "Agency Analytics Tracker"]
+    },
+    {
+        id: "property-stories",
+        number: "07",
+        icon: PlaySquare,
+        title: "Property Stories & Immersive 4K Video Reels",
+        tag: "Visual Feed",
+        badgeColor: "#8C56FC",
+        status: "Dynamic 24h Feed",
+        desc: "Instagram-style 24-hour property video reels, cinematic 4K drone walkthroughs, and neighborhood highlights for dynamic and visual property discovery.",
+        highlights: ["24-Hour Ephemeral Stories", "4K Video Walkthroughs", "Neighborhood Highlights"]
     }
 ];
 
@@ -187,8 +243,8 @@ export default function HomePage() {
             <Toaster position="top-center" />
             <div className="flex-1 flex flex-col py-2 space-y-6">
 
-                {/* Top Profile Card with Embedded Countdown Timer */}
-                <div className="pl-glass-card p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-5 border border-[#8C56FC]/20 shadow-[0_12px_40px_rgba(0,0,0,0.4)]">
+                {/* 3D Sleek Top Profile Card with Embedded Countdown Timer */}
+                <div className="pl-glass-card p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-5 border border-[#8C56FC]/20 shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:border-[#8C56FC]/40 transition-all duration-300">
                     {/* Left: User / Agent Info */}
                     <div className="flex items-center gap-4">
                         <div
@@ -259,14 +315,14 @@ export default function HomePage() {
                     </div>
                 </div>
 
-                {/* Real Data Metrics Grid */}
+                {/* Real Data Metrics Grid with 3D Hover Elevation */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     {metrics.map((stat, i) => {
                         const Icon = stat.icon;
                         return (
                             <div
                                 key={i}
-                                className="pl-glass-card p-4 sm:p-5 flex flex-col justify-between hover:border-[#8C56FC] hover:shadow-[0_12px_30px_rgba(140,86,252,0.18)] hover:-translate-y-1 transition-all duration-300"
+                                className="pl-glass-card p-4 sm:p-5 flex flex-col justify-between hover:border-[#8C56FC] hover:shadow-[0_16px_36px_rgba(140,86,252,0.16)] hover:-translate-y-1.5 transition-all duration-300"
                             >
                                 <div className="flex items-center justify-between mb-2">
                                     <span className="text-xs font-semibold text-[var(--pl-text-muted)] tracking-wide">{stat.label}</span>
@@ -293,13 +349,13 @@ export default function HomePage() {
                 </div>
 
                 {/* Main 2-Column Dashboard Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-                    {/* Left Main Column (7 Cols on desktop) */}
-                    <div className="lg:col-span-7 space-y-6">
+                    {/* Left Column (6 Cols on desktop) — Roadmap & Support */}
+                    <div className="lg:col-span-6 space-y-6">
 
                         {/* Development Progress Roadmap */}
-                        <div className="pl-glass-card p-6">
+                        <div className="pl-glass-card p-6 shadow-sm">
                             <div className="flex items-center justify-between mb-4">
                                 <div>
                                     <h2 className="text-base sm:text-lg font-semibold text-[var(--pl-text-primary)] flex items-center gap-2">
@@ -319,7 +375,7 @@ export default function HomePage() {
                         </div>
 
                         {/* Early Feedback & Support Card */}
-                        <div className="pl-glass-card p-5 bg-gradient-to-br from-[rgba(140,86,252,0.08)] to-[rgba(255,137,1,0.06)]">
+                        <div className="pl-glass-card p-5 bg-gradient-to-br from-[rgba(140,86,252,0.08)] to-[rgba(255,137,1,0.06)] border border-[#8C56FC]/20">
                             <div className="flex items-start justify-between gap-4">
                                 <div>
                                     <h3 className="font-semibold text-sm text-[var(--pl-text-primary)] mb-1 flex items-center gap-2">
@@ -331,60 +387,134 @@ export default function HomePage() {
                                     </p>
                                 </div>
                                 <a
-                                    href="mailto:tpa.ofe@gmail.com?subject=Agent3 Pre-Launcher Feedback"
+                                    href="https://wa.me/923307864445?text=Hello%20TrueProp%20Agent,%20I%20am%20reaching%20out%20from%20Agent3%20Early%20Access."
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="pl-btn pl-btn-outline text-xs flex-shrink-0"
                                     style={{ width: "auto", padding: "8px 14px", textDecoration: "none" }}
                                 >
-                                    Contact Team →
+                                    Chat with TrueProp Agent →
                                 </a>
                             </div>
                         </div>
 
                     </div>
 
-                    {/* Right Column (5 Cols on desktop) */}
-                    <div className="lg:col-span-5 space-y-6">
+                    {/* Right Column (6 Cols on desktop) — Futuristic 3D Feature Pathway */}
+                    <div className="lg:col-span-6 space-y-6">
 
-                        {/* Announcements & Platform Live Feed */}
-                        <div className="pl-glass-card p-6">
-                            <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-base font-semibold text-[var(--pl-text-primary)] flex items-center gap-2">
-                                    <Bell className="w-4 h-4 text-[#8C56FC]" />
-                                    Platform Updates
-                                </h2>
-                                <span className="text-[11px] text-[var(--pl-text-muted)] font-medium">Live Feed</span>
+                        {/* 3D Platform Updates & Prime Features Pathway */}
+                        <div className="pl-glass-card p-6 shadow-sm">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-7 h-7 rounded-lg bg-[#8C56FC]/15 flex items-center justify-center text-[#8C56FC]">
+                                            <Sparkles className="w-4 h-4" />
+                                        </div>
+                                        <h2 className="text-base sm:text-lg font-semibold text-[var(--pl-text-primary)]">
+                                            Platform Updates &amp; Core Innovations
+                                        </h2>
+                                    </div>
+                                    <p className="text-xs text-[var(--pl-text-secondary)] mt-0.5">
+                                        Hover any module below to explore feature architecture
+                                    </p>
+                                </div>
+                                <span className="pl-badge text-xs self-start sm:self-auto" style={{ background: "rgba(140, 86, 252, 0.15)", color: "#8C56FC" }}>
+                                    <Zap className="w-3 h-3 inline mr-1" /> 7 Prime Modules
+                                </span>
                             </div>
 
-                            <div className="space-y-3.5">
-                                {ANNOUNCEMENTS.map((item, i) => (
-                                    <div
-                                        key={i}
-                                        className="p-3.5 rounded-xl border border-[var(--pl-border-subtle)] bg-[var(--pl-bg-input)] hover:border-[#8C56FC] transition-all"
-                                    >
-                                        <div className="flex items-start gap-3">
-                                            <span className="text-2xl flex-shrink-0">{item.icon}</span>
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center justify-between gap-1 mb-1">
-                                                    <span className="text-xs font-semibold text-[var(--pl-text-primary)] truncate">
-                                                        {item.title}
-                                                    </span>
-                                                    <span
-                                                        className="text-[9px] font-medium px-2 py-0.5 rounded-full flex-shrink-0"
-                                                        style={{ background: `${item.badgeColor}18`, color: item.badgeColor }}
+                            {/* Connected 3D Feature Pathway with Hover-Expand (Minimal View by Default) */}
+                            <div className="space-y-3">
+                                {PRIME_FEATURES.map((feat) => {
+                                    const IconComponent = feat.icon;
+
+                                    return (
+                                        <div 
+                                            key={feat.id}
+                                            className="pl-feature-compact-card group cursor-pointer"
+                                        >
+                                            {/* Minimalist Heading View (Always Visible) */}
+                                            <div className="flex items-center justify-between gap-3">
+                                                <div className="flex items-center gap-3 min-w-0">
+                                                    {/* Compact Icon */}
+                                                    <div 
+                                                        className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm transition-transform group-hover:scale-110"
+                                                        style={{ 
+                                                            background: `linear-gradient(135deg, ${feat.badgeColor}22 0%, ${feat.badgeColor}08 100%)`,
+                                                            border: `1.5px solid ${feat.badgeColor}40`,
+                                                            color: feat.badgeColor
+                                                        }}
                                                     >
-                                                        {item.tag}
+                                                        <IconComponent className="w-4 h-4" />
+                                                    </div>
+
+                                                    {/* Number & Title */}
+                                                    <div className="flex items-center gap-2 min-w-0">
+                                                        <span className="pl-feature-num flex-shrink-0">
+                                                            {feat.number}
+                                                        </span>
+                                                        <h3 className="text-xs sm:text-sm font-semibold text-[var(--pl-text-primary)] truncate group-hover:text-[#8C56FC] transition-colors">
+                                                            {feat.title}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+
+                                                {/* Badge / Status */}
+                                                <div className="flex items-center gap-2 flex-shrink-0">
+                                                    <span
+                                                        className="text-[9px] font-semibold px-2 py-0.5 rounded-full"
+                                                        style={{ 
+                                                            background: `${feat.badgeColor}18`, 
+                                                            color: feat.badgeColor,
+                                                            border: `1px solid ${feat.badgeColor}33`
+                                                        }}
+                                                    >
+                                                        {feat.tag}
+                                                    </span>
+                                                    <span className="text-[10px] text-[var(--pl-text-muted)] group-hover:text-[#8C56FC] transition-colors hidden sm:inline">
+                                                        Hover ▾
                                                     </span>
                                                 </div>
-                                                <p className="text-xs text-[var(--pl-text-secondary)] leading-relaxed">
-                                                    {item.desc}
-                                                </p>
-                                                <span className="text-[10px] text-[var(--pl-text-muted)] mt-1.5 block">
-                                                    {item.date} • Verified by Admin
-                                                </span>
+                                            </div>
+
+                                            {/* Collapsible Details Drawer (Reveals On HOVER) */}
+                                            <div className="pl-hover-drawer">
+                                                <div className="pt-2.5 border-t border-[var(--pl-border-subtle)] space-y-2.5">
+                                                    <p className="text-xs text-[var(--pl-text-secondary)] leading-relaxed pl-1">
+                                                        {feat.desc}
+                                                    </p>
+
+                                                    {/* Highlights Grid */}
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] pl-1">
+                                                        {feat.highlights.map((bullet, bIdx) => (
+                                                            <div key={bIdx} className="flex items-center gap-1.5 text-[var(--pl-text-muted)]">
+                                                                <CheckCircle2 className="w-3 h-3 text-[#8C56FC] flex-shrink-0" />
+                                                                <span className="truncate">{bullet}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+
+                                                    {/* Status Bar */}
+                                                    <div className="flex items-center justify-between pt-1 text-[10px] text-[var(--pl-text-muted)]">
+                                                        <div className="flex items-center gap-1.5">
+                                                            <span 
+                                                                className="pl-live-dot"
+                                                                style={{ background: feat.badgeColor }}
+                                                            />
+                                                            <span className="font-semibold uppercase tracking-wider" style={{ color: feat.badgeColor }}>
+                                                                {feat.status}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-[#8C56FC] font-semibold">
+                                                            Verified Architecture →
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
 
@@ -394,11 +524,11 @@ export default function HomePage() {
                 {/* Footer */}
                 <div className="text-center pt-6 pb-4 border-t" style={{ borderColor: "var(--pl-border-subtle)" }}>
                     <div className="flex justify-center gap-4 mb-2 text-xs">
-                        <Link href="/privacy" className="pl-link hover:underline text-[var(--pl-text-muted)]" style={{ color: "var(--pl-text-muted)", fontSize: "11px", textDecoration: "none" }}>
+                        <Link href="/privacy" target="_blank" className="pl-link hover:underline text-[var(--pl-text-muted)]" style={{ color: "var(--pl-text-muted)", fontSize: "11px", textDecoration: "none" }}>
                             Privacy Policy &amp; Data Protection
                         </Link>
                         <span className="text-[var(--pl-text-muted)] opacity-40 text-[11px]">•</span>
-                        <Link href="/terms" className="pl-link hover:underline text-[var(--pl-text-muted)]" style={{ color: "var(--pl-text-muted)", fontSize: "11px", textDecoration: "none" }}>
+                        <Link href="/terms" target="_blank" className="pl-link hover:underline text-[var(--pl-text-muted)]" style={{ color: "var(--pl-text-muted)", fontSize: "11px", textDecoration: "none" }}>
                             Terms &amp; Conditions
                         </Link>
                     </div>
@@ -413,3 +543,4 @@ export default function HomePage() {
         </PreLauncherLayout>
     );
 }
+
