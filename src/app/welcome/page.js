@@ -12,7 +12,7 @@ export default function WelcomePage() {
     );
 
     return (
-        <PreLauncherLayout topbarPosition="bottom" footer={footerContent}>
+        <PreLauncherLayout topbarPosition="top" footer={footerContent}>
             <div className="flex-1 flex flex-col items-center justify-center py-6">
                 {/* Minimal Hero / Early Access Section */}
                 <div className="text-center mb-8">
