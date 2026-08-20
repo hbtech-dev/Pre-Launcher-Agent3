@@ -214,25 +214,32 @@ async function performAuthRequest(endpoint, method = 'GET', body = null) {
     fetchOptions.body = JSON.stringify(body);
   }
 
-  try {
-    const res = await fetch(`${PRIMARY_API_URL}${endpoint}`, fetchOptions);
-    const data = await res.json();
-    if (data.status === 'success') return data;
+  const primaryUrl = getBaseUrl();
+  const secondaryUrl = primaryUrl === LOCAL_FALLBACK_URL ? PRIMARY_API_URL : LOCAL_FALLBACK_URL;
 
-    if (isLocal && PRIMARY_API_URL !== LOCAL_FALLBACK_URL) {
+  try {
+    const res = await fetch(`${primaryUrl}${endpoint}`, fetchOptions);
+    if (!res.ok && res.status === 404 && isLocal && primaryUrl !== secondaryUrl) {
+      const secRes = await fetch(`${secondaryUrl}${endpoint}`, fetchOptions);
+      return await secRes.json();
+    }
+    const data = await res.json();
+    if (data.status === 'success' || data.status === 200 || data.success) return data;
+
+    if (isLocal && primaryUrl !== secondaryUrl) {
       try {
-        const localRes = await fetch(`${LOCAL_FALLBACK_URL}${endpoint}`, fetchOptions);
-        const localData = await localRes.json();
-        if (localData.status === 'success') return localData;
+        const secRes = await fetch(`${secondaryUrl}${endpoint}`, fetchOptions);
+        const secData = await secRes.json();
+        if (secData.status === 'success' || secData.status === 200 || secData.success) return secData;
       } catch (e) {}
     }
     return data;
   } catch (err) {
-    if (isLocal) {
+    if (isLocal && primaryUrl !== secondaryUrl) {
       try {
-        const localRes = await fetch(`${LOCAL_FALLBACK_URL}${endpoint}`, fetchOptions);
-        return await localRes.json();
-      } catch (localErr) {
+        const secRes = await fetch(`${secondaryUrl}${endpoint}`, fetchOptions);
+        return await secRes.json();
+      } catch (secErr) {
         return { status: 'error', message: 'Unable to connect to server.' };
       }
     }
@@ -256,6 +263,9 @@ export const phoneVerificationAPI = {
 };
 
 export const luckyWheelAPI = {
+  getStatus: async () => {
+    return performAuthRequest('/api/v1/lucky-wheel/status', 'GET');
+  },
   spin: async () => {
     return performAuthRequest('/api/v1/lucky-wheel/spin', 'POST');
   },

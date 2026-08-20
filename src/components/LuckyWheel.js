@@ -22,18 +22,19 @@ import toast from "react-hot-toast";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import { luckyWheelAPI } from "@/config/api";
 
-// 8 Slices (45 deg each) — Grand Prize Rs 200 (72h Window Controlled) + Empty Slots
+// 8 Slices (45 deg each) — Alternating Rewards (2500, 1000, 2000, 200) & Empty Slots
+// System rule: The wheel only stops and wins on slot 6 (Rs 200) once every 72 hours
 const SLOTS = [
     {
         id: 0,
-        label: "Rs 200",
+        label: "Rs 2500",
         type: "reward",
-        amount: 200,
-        subtext: "Grand Prize 👑",
+        amount: 2500,
+        subtext: "Mega Cash 👑",
         color: "#f59e0b",
         bg: "#3b0764",
         textFill: "#fbbf24",
-        isJackpot: true
+        isJackpot: false
     },
     {
         id: 1,
@@ -48,13 +49,13 @@ const SLOTS = [
     },
     {
         id: 2,
-        label: "Empty",
-        type: "empty",
-        amount: 0,
-        subtext: "Better Luck",
-        color: "#64748b",
-        bg: "#1e1b4b",
-        textFill: "#94a3b8",
+        label: "Rs 1000",
+        type: "reward",
+        amount: 1000,
+        subtext: "VIP Cash 💎",
+        color: "#8C56FC",
+        bg: "#2e1065",
+        textFill: "#c084fc",
         isJackpot: false
     },
     {
@@ -62,7 +63,7 @@ const SLOTS = [
         label: "Empty",
         type: "empty",
         amount: 0,
-        subtext: "Try Tomorrow",
+        subtext: "Better Luck",
         color: "#64748b",
         bg: "#111827",
         textFill: "#94a3b8",
@@ -70,13 +71,13 @@ const SLOTS = [
     },
     {
         id: 4,
-        label: "Empty",
-        type: "empty",
-        amount: 0,
-        subtext: "Better Luck",
-        color: "#64748b",
-        bg: "#1e1b4b",
-        textFill: "#94a3b8",
+        label: "Rs 2000",
+        type: "reward",
+        amount: 2000,
+        subtext: "Super Cash 🪙",
+        color: "#06b6d4",
+        bg: "#083344",
+        textFill: "#22d3ee",
         isJackpot: false
     },
     {
@@ -95,7 +96,7 @@ const SLOTS = [
         label: "Rs 200",
         type: "reward",
         amount: 200,
-        subtext: "Cash Reward 💎",
+        subtext: "Cash Prize ⚡",
         color: "#10b981",
         bg: "#064e3b",
         textFill: "#34d399",
@@ -124,6 +125,7 @@ export default function LuckyWheel({ isVerified = false, onOpenVerification }) {
     const [isTicking, setIsTicking] = useState(false);
     const [totalCredits, setTotalCredits] = useState(500);
     const [showVerificationGate, setShowVerificationGate] = useState(false);
+    const [nextSpinTimestamp, setNextSpinTimestamp] = useState(null);
 
     // Payout Claim Form state
     const [claimedReward, setClaimedReward] = useState(null);
@@ -135,45 +137,40 @@ export default function LuckyWheel({ isVerified = false, onOpenVerification }) {
 
     const rotationRef = useRef(0);
 
-    // Initialize spin status and fetch user's reward status from DB
-    useEffect(() => {
+    // Initialize spin status directly from the Database (no client-side bypass)
+    const fetchUserStatus = async () => {
         try {
-            const lastSpinDate = localStorage.getItem("pl_wheel_last_spin");
-            const savedCredits = localStorage.getItem("pl_weekly_credits");
-            const todayStr = new Date().toISOString().split("T")[0];
-
-            if (savedCredits) {
-                setTotalCredits(parseInt(savedCredits, 10) || 500);
-            }
-
-            if (lastSpinDate === todayStr) {
-                setHasSpunToday(true);
-            } else {
-                setHasSpunToday(false);
-            }
-        } catch (e) {}
-
-        // Fetch user's claimed reward from backend
-        const fetchReward = async () => {
-            try {
-                const res = await luckyWheelAPI.getMyReward();
-                if (res && res.status === "success" && res.data) {
-                    setClaimedReward(res.data);
+            const res = await luckyWheelAPI.getStatus();
+            if (res && res.status === "success" && res.data) {
+                const { canSpin, nextSpinAt, claimedReward: dbReward } = res.data;
+                setHasSpunToday(!canSpin);
+                if (nextSpinAt) {
+                    setNextSpinTimestamp(new Date(nextSpinAt).getTime());
+                } else {
+                    setNextSpinTimestamp(null);
                 }
-            } catch (e) {}
-        };
-        fetchReward();
+                if (dbReward) {
+                    setClaimedReward(dbReward);
+                }
+            }
+        } catch (e) {
+            console.error("Lucky wheel status fetch error:", e);
+        }
+    };
+
+    useEffect(() => {
+        fetchUserStatus();
     }, []);
 
-    // Live countdown timer until midnight for next free spin
+    // Live countdown timer based on real DB nextSpinTimestamp
     useEffect(() => {
         const updateTimer = () => {
-            const now = new Date();
-            const tomorrow = new Date(now);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            tomorrow.setHours(0, 0, 0, 0);
+            if (!nextSpinTimestamp) {
+                setTimeLeft("Available Now!");
+                return;
+            }
 
-            const diff = tomorrow.getTime() - now.getTime();
+            const diff = nextSpinTimestamp - Date.now();
             if (diff <= 0) {
                 setHasSpunToday(false);
                 setTimeLeft("Available Now!");
@@ -192,7 +189,7 @@ export default function LuckyWheel({ isVerified = false, onOpenVerification }) {
         updateTimer();
         const interval = setInterval(updateTimer, 1000);
         return () => clearInterval(interval);
-    }, []);
+    }, [nextSpinTimestamp]);
 
     const spinWheel = async () => {
         if (!isVerified) {
@@ -200,7 +197,15 @@ export default function LuckyWheel({ isVerified = false, onOpenVerification }) {
             return;
         }
 
-        if (isSpinning || hasSpunToday) return;
+        if (isSpinning) return;
+
+        if (hasSpunToday) {
+            toast(`⏳ You have already used your daily free spin. Next spin available in ${timeLeft || "tomorrow"}.`, {
+                icon: "⏱️",
+                style: { background: "#0f1422", color: "#fff", border: "1px solid rgba(255,255,255,0.15)" }
+            });
+            return;
+        }
 
         setIsSpinning(true);
         setIsTicking(true);
@@ -210,18 +215,28 @@ export default function LuckyWheel({ isVerified = false, onOpenVerification }) {
         let wonAmount = 0;
 
         try {
-            // Query backend 72-hour prize window engine
+            // Query backend 24-hour limit & 72-hour prize window engine in MongoDB
             const res = await luckyWheelAPI.spin();
             if (res && res.status === "success" && res.data) {
                 targetIndex = res.data.slotId !== undefined ? res.data.slotId : 1;
                 isWin = Boolean(res.data.isWin);
                 wonAmount = res.data.amount || 0;
+            } else if (res && (res.status === "error" || res.message)) {
+                setIsSpinning(false);
+                setIsTicking(false);
+                toast(res?.message || "You have already spun today. Next spin available tomorrow.", {
+                    icon: "⏱️",
+                    style: { background: "#0f1422", color: "#fff", border: "1px solid rgba(255,255,255,0.15)" }
+                });
+                fetchUserStatus();
+                return;
             } else {
-                // Fallback to empty slot
+                // Offline fallback to empty slot
                 const emptySlots = [1, 2, 3, 4, 5, 7];
                 targetIndex = emptySlots[Math.floor(Math.random() * emptySlots.length)];
             }
         } catch (e) {
+            // Offline fallback
             const emptySlots = [1, 2, 3, 4, 5, 7];
             targetIndex = emptySlots[Math.floor(Math.random() * emptySlots.length)];
         }
@@ -245,15 +260,9 @@ export default function LuckyWheel({ isVerified = false, onOpenVerification }) {
             setIsSpinning(false);
             setIsTicking(false);
             setHasSpunToday(true);
-
-            const todayStr = new Date().toISOString().split("T")[0];
-            localStorage.setItem("pl_wheel_last_spin", todayStr);
+            setNextSpinTimestamp(Date.now() + 24 * 60 * 60 * 1000);
 
             if (isWin || winningSlot.type === "reward") {
-                const currentSaved = parseInt(localStorage.getItem("pl_weekly_credits") || "500", 10);
-                const newTotal = currentSaved + 200;
-                setTotalCredits(newTotal);
-                localStorage.setItem("pl_weekly_credits", String(newTotal));
                 toast.success(`🎉 JACKPOT! You won Rs 200 Cash Reward!`, {
                     style: { background: "#0f1422", color: "#fff", border: "1px solid #10b981" }
                 });
@@ -265,6 +274,7 @@ export default function LuckyWheel({ isVerified = false, onOpenVerification }) {
             }
 
             setResultModal(isWin ? { ...winningSlot, isJackpot: true } : winningSlot);
+            fetchUserStatus();
         }, 4600);
     };
 
@@ -430,9 +440,13 @@ export default function LuckyWheel({ isVerified = false, onOpenVerification }) {
                         )}
 
                         {/* ── THE CIRCULAR WHEEL ── */}
-                        <div className="relative mx-auto my-3 flex items-center justify-center" style={{ width: "310px", height: "310px" }}>
+                        <div
+                            className="relative mx-auto my-3 flex items-center justify-center cursor-pointer"
+                            style={{ width: "310px", height: "310px" }}
+                            onClick={() => !isSpinning && spinWheel()}
+                        >
                             {/* Top Pointer / Needle Indicator */}
-                            <div className={`pl-wheel-pointer ${isTicking ? "ticking" : ""}`}>
+                            <div className={`pl-wheel-pointer ${isTicking ? "ticking" : ""}`} style={{ zIndex: 35 }}>
                                 <svg width="34" height="42" viewBox="0 0 34 42" fill="none">
                                     <path
                                         d="M17 40L6 14C3 8 7.5 1 14.5 1H19.5C26.5 1 31 8 28 14L17 40Z"
@@ -451,7 +465,7 @@ export default function LuckyWheel({ isVerified = false, onOpenVerification }) {
                             </div>
 
                             {/* Outer Golden Bulb Frame */}
-                            <div className="pl-wheel-rim" style={{ width: "300px", height: "300px" }}>
+                            <div className="pl-wheel-rim" style={{ width: "300px", height: "300px", position: "relative" }}>
                                 {/* Rotating SVG Wheel */}
                                 <div
                                     style={{
@@ -537,24 +551,58 @@ export default function LuckyWheel({ isVerified = false, onOpenVerification }) {
                                         <circle cx="150" cy="150" r="145" fill="none" stroke="rgba(250, 204, 21, 0.4)" strokeWidth="3" />
                                     </svg>
                                 </div>
-
-                                {/* Center Spin Button Knob */}
-                                <button
-                                    type="button"
-                                    onClick={spinWheel}
-                                    disabled={isSpinning || hasSpunToday}
-                                    className={`pl-wheel-center-knob ${isSpinning ? "spinning" : ""} ${hasSpunToday ? "disabled" : ""}`}
-                                    aria-label="Spin Wheel"
-                                >
-                                    <div className="pl-wheel-center-inner">
-                                        <Sparkles className="w-5 h-5 text-[#facc15] mb-0.5" />
-                                        <span className="text-[11px] font-black tracking-wider text-white uppercase">
-                                            {isSpinning ? "SPINNING" : hasSpunToday ? "DONE" : "SPIN"}
-                                        </span>
-                                    </div>
-                                </button>
                             </div>
+
+                            {/* Center Spin Button Knob (Placed at exact center with high z-index) */}
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    spinWheel();
+                                }}
+                                disabled={isSpinning}
+                                className={`pl-wheel-center-btn ${isSpinning ? "spinning" : ""} ${hasSpunToday ? "disabled" : ""}`}
+                                style={{ zIndex: 30 }}
+                                aria-label="Spin Wheel"
+                            >
+                                <Sparkles className="w-5 h-5 text-[#facc15] mb-0.5" />
+                                <span className="text-[11px] font-black tracking-wider text-white uppercase">
+                                    {isSpinning ? "SPINNING" : hasSpunToday ? "DONE" : "SPIN"}
+                                </span>
+                            </button>
                         </div>
+
+                        {/* Prominent Bottom Spin Button Action */}
+                        <button
+                            type="button"
+                            onClick={spinWheel}
+                            disabled={isSpinning}
+                            className="pl-btn pl-btn-primary w-full mt-3 py-3 text-sm font-bold shadow-lg flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02]"
+                            style={{
+                                background: hasSpunToday
+                                    ? "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)"
+                                    : "linear-gradient(135deg, #8C56FC 0%, #a855f7 50%, #FF8901 100%)",
+                                borderColor: hasSpunToday ? "rgba(255,255,255,0.15)" : "#facc15",
+                                color: hasSpunToday ? "var(--pl-text-muted)" : "#ffffff"
+                            }}
+                        >
+                            {isSpinning ? (
+                                <>
+                                    <RotateCw className="w-4 h-4 animate-spin text-[#facc15]" />
+                                    <span>SPINNING THE WHEEL...</span>
+                                </>
+                            ) : hasSpunToday ? (
+                                <>
+                                    <Clock className="w-4 h-4 text-[#FF8901]" />
+                                    <span>Next Free Spin in {timeLeft}</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Sparkles className="w-4 h-4 text-[#facc15]" />
+                                    <span>🎯 SPIN WHEEL NOW (1 FREE SPIN)</span>
+                                </>
+                            )}
+                        </button>
 
                         {/* Footer Info Box */}
                         <div className="mt-3 p-3 bg-[var(--pl-bg-input)] border border-[var(--pl-border-subtle)] rounded-xl flex items-center justify-between text-xs">
