@@ -151,7 +151,8 @@ export default function HomePage() {
 
         setIsAuthenticated(true);
         setIsCheckingAuth(false);
-        setRole(session.userType || session.role || "user");
+        const currentUserRole = session.userType || session.role || "user";
+        setRole(currentUserRole);
         setUser(profile);
 
         // Fetch real-time live platform statistics from database
@@ -168,8 +169,13 @@ export default function HomePage() {
             }
         };
 
-        // Check if user is WhatsApp phone verified
+        // Check if user is WhatsApp phone verified (only for regular users; agents are verified automatically)
         const checkPhoneVerification = async () => {
+            if (currentUserRole === "agent") {
+                setIsPhoneVerified(true);
+                return;
+            }
+
             try {
                 const res = await phoneVerificationAPI.getStatus();
                 if (res && (res.status === "success" || res.success) && res.data) {
@@ -277,7 +283,7 @@ export default function HomePage() {
                             <div className="flex items-center gap-2 flex-wrap">
                                 <h1 className="font-semibold text-lg sm:text-2xl text-[var(--pl-text-primary)] flex items-center gap-1.5">
                                     <span>{displayName}</span>
-                                    {isPhoneVerified && <VerifiedBadge size="sm" />}
+                                    {role !== "agent" && isPhoneVerified && <VerifiedBadge size="sm" />}
                                 </h1>
                                 <span
                                     className="pl-badge text-xs px-2.5 py-1 font-semibold"
@@ -289,7 +295,7 @@ export default function HomePage() {
                                     {role === "agent" ? "🛡️ Verified Partner Agent" : "🌟 Early VIP Host"}
                                 </span>
 
-                                {!isPhoneVerified && (
+                                {role !== "agent" && !isPhoneVerified && (
                                     <button
                                         type="button"
                                         onClick={() => setIsVerificationModalOpen(true)}
@@ -564,7 +570,7 @@ export default function HomePage() {
 
             {/* Floating Lucky Spin Wheel */}
             <LuckyWheel
-                isVerified={isPhoneVerified}
+                isVerified={role === "agent" || isPhoneVerified}
                 onOpenVerification={() => setIsVerificationModalOpen(true)}
             />
 
