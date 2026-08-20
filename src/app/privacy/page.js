@@ -129,7 +129,7 @@ export default function PrivacyPolicyPage() {
 
                 {/* Footer */}
                 <footer className="mt-16 pt-6 border-t border-slate-200 text-center text-xs text-slate-400">
-                    © 2026 Agent3 Technologies Ltd. • All rights reserved.
+                    © 2026 <a href="https://truepropagents.com/" target="_blank" rel="noopener noreferrer" className="hover:underline text-slate-600">True Prop Agents</a> • All rights reserved.
                 </footer>
             </main>
         </div>

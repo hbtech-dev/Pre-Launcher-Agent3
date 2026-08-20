@@ -7,7 +7,7 @@ import { Home, Building2 } from "lucide-react";
 export default function WelcomePage() {
     const footerContent = (
         <p className="mt-8 text-center text-xs" style={{ color: "var(--pl-text-muted)" }}>
-            © 2026 Agent3 Technologies · Pakistan
+            © 2026 <a href="https://truepropagents.com/" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-[var(--pl-accent-primary)] transition-colors">True Prop Agents</a> · Pakistan
         </p>
     );
 

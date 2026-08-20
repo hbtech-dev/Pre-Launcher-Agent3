@@ -556,7 +556,7 @@ export default function HomePage() {
                         </Link>
                     </div>
                     <p className="text-xs text-[var(--pl-text-muted)]" style={{ fontSize: "11px" }}>
-                        © 2026 Agent3 Technologies Ltd. • Connected to Production Cloud • All rights reserved.
+                        © 2026 <a href="https://truepropagents.com/" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-[var(--pl-text-primary)] transition-colors">True Prop Agents</a> • Connected to Production Cloud • All rights reserved.
                     </p>
                 </div>
             </div>

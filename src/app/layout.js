@@ -21,9 +21,9 @@ export const metadata = {
     "Plot Masterplans",
     "Society Dimension Maps"
   ],
-  authors: [{ name: "Agent3 Technologies", url: "https://agent3.pk" }],
-  creator: "Agent3 Technologies Ltd.",
-  publisher: "Agent3",
+  authors: [{ name: "True Prop Agents", url: "https://truepropagents.com/" }],
+  creator: "True Prop Agents",
+  publisher: "True Prop Agents",
   icons: {
     icon: [
       { url: '/favicon.ico' },
