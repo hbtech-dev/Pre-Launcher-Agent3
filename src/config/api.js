@@ -255,3 +255,16 @@ export const phoneVerificationAPI = {
   }
 };
 
+export const luckyWheelAPI = {
+  spin: async () => {
+    return performAuthRequest('/api/v1/lucky-wheel/spin', 'POST');
+  },
+  claimReward: async (data) => {
+    return performAuthRequest('/api/v1/lucky-wheel/claim', 'POST', data);
+  },
+  getMyReward: async () => {
+    return performAuthRequest('/api/v1/lucky-wheel/my-reward', 'GET');
+  }
+};
+
+
