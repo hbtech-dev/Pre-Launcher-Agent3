@@ -284,7 +284,7 @@ export default function HomePage() {
                                         color: role === "agent" ? "#FF8901" : "#8C56FC"
                                     }}
                                 >
-                                    {role === "agent" ? "🛡️ Verified Partner Agent" : "🌟 Early VIP Host"}
+                                    {role === "agent" ? "🛡️ Host / Partner Agent" : "🌟 Early VIP Customer"}
                                 </span>
 
                                 {role !== "agent" && !isPhoneVerified && (
@@ -399,25 +399,27 @@ export default function HomePage() {
 
                         {/* Early Feedback & Support Card */}
                         <div className="pl-glass-card p-5 bg-gradient-to-br from-[rgba(140,86,252,0.08)] to-[rgba(255,137,1,0.06)] border border-[#8C56FC]/20">
-                            <div className="flex items-start justify-between gap-4">
-                                <div>
-                                    <h3 className="font-semibold text-sm text-[var(--pl-text-primary)] mb-1 flex items-center gap-2">
-                                        <Send className="w-4 h-4 text-[#8C56FC]" />
-                                        Have Early Feedback or Feature Requests?
+                            <div className="flex flex-col 2xl:flex-row 2xl:items-center justify-between gap-4">
+                                <div className="min-w-0 flex-1">
+                                    <h3 className="font-semibold text-sm sm:text-base text-[var(--pl-text-primary)] mb-1.5 flex items-center gap-2">
+                                        <Send className="w-4 h-4 text-[#8C56FC] flex-shrink-0" />
+                                        <span>Have Early Feedback or Feature Requests?</span>
                                     </h3>
-                                    <p className="text-xs text-[var(--pl-text-secondary)] leading-relaxed">
+                                    <p className="text-xs sm:text-sm text-[var(--pl-text-secondary)] leading-relaxed">
                                         Help us shape Agent3 into Pakistan&apos;s ultimate real estate platform. We review every community suggestion.
                                     </p>
                                 </div>
-                                <a
-                                    href="https://wa.me/923307864445?text=Hello%20TrueProp%20Agent,%20I%20am%20reaching%20out%20from%20Agent3%20Early%20Access."
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="pl-btn pl-btn-outline text-xs flex-shrink-0"
-                                    style={{ width: "auto", padding: "8px 14px", textDecoration: "none" }}
-                                >
-                                    Chat with TrueProp Agent →
-                                </a>
+                                <div className="flex-shrink-0 pt-1 2xl:pt-0">
+                                    <a
+                                        href="https://wa.me/923307864445?text=Hello%20TrueProp%20Agent,%20I%20am%20reaching%20out%20from%20Agent3%20Early%20Access."
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="pl-btn pl-btn-outline text-xs sm:text-sm font-semibold inline-flex items-center justify-center whitespace-nowrap text-center"
+                                        style={{ width: "auto", padding: "10px 18px", textDecoration: "none" }}
+                                    >
+                                        Chat with TrueProp Agent →
+                                    </a>
+                                </div>
                             </div>
                         </div>
 

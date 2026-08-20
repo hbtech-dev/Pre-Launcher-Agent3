@@ -131,11 +131,11 @@ export default function ProgressMap() {
 
                             {/* Milestone Header (Always Visible) */}
                             <div className="flex items-center justify-between gap-3">
-                                <div className="flex items-center gap-2 min-w-0">
+                                <div className="flex items-center gap-2 min-w-0 flex-1">
                                     <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--pl-text-muted)] flex-shrink-0">
                                         {m.phase}
                                     </span>
-                                    <h3 className="font-semibold text-xs sm:text-sm text-[var(--pl-text-primary)] truncate">
+                                    <h3 className="font-semibold text-xs sm:text-sm text-[var(--pl-text-primary)]">
                                         {m.title}
                                     </h3>
                                 </div>
