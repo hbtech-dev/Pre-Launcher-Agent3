@@ -5,12 +5,7 @@ import Link from "next/link";
 import Particles from "./Particles";
 
 export default function PreLauncherLayout({ children, showBack = false, backUrl = "/welcome", wide = false, topbarPosition = "top", footer = null }) {
-    const [theme, setTheme] = useState(() => {
-        if (typeof window !== "undefined") {
-            return document.documentElement.getAttribute("data-theme") || localStorage.getItem("pl_theme") || "light";
-        }
-        return "light";
-    });
+    const [theme, setTheme] = useState("light");
 
     useEffect(() => {
         const saved = localStorage.getItem("pl_theme") || "light";
@@ -29,7 +24,7 @@ export default function PreLauncherLayout({ children, showBack = false, backUrl 
     };
 
     return (
-        <div className={`pl-app pl-theme-${theme}`}>
+        <div className={`pl-app pl-theme-${theme}`} suppressHydrationWarning>
             <Particles />
             <div className={`pl-container ${wide ? "pl-container--dashboard" : ""}`} style={{ position: "relative", zIndex: 1 }}>
                 {/* Top Header Bar with Logo and Theme Switch */}
@@ -50,6 +45,7 @@ export default function PreLauncherLayout({ children, showBack = false, backUrl 
                         <div className="pl-theme-switch" role="group" aria-label="Theme Switcher">
                             <button
                                 type="button"
+                                suppressHydrationWarning
                                 className={`pl-theme-opt ${theme === "light" ? "active" : ""}`}
                                 onClick={() => changeTheme("light")}
                             >
@@ -57,6 +53,7 @@ export default function PreLauncherLayout({ children, showBack = false, backUrl 
                             </button>
                             <button
                                 type="button"
+                                suppressHydrationWarning
                                 className={`pl-theme-opt ${theme === "dark" ? "active" : ""}`}
                                 onClick={() => changeTheme("dark")}
                             >
