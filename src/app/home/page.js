@@ -238,8 +238,8 @@ export default function HomePage() {
         },
         {
             label: "Platform Status",
-            value: "80% Ready",
-            change: "Phase 3: Testing & Polish",
+            value: liveStats.readinessPercent !== undefined ? `${liveStats.readinessPercent}% Ready` : (liveStats.platformStatus || "80% Ready"),
+            change: liveStats.phaseSubtext || "Phase 3: Testing & Polish",
             icon: Activity,
             color: "#38bdf8",
             bg: "rgba(56, 189, 248, 0.12)",
@@ -317,7 +317,7 @@ export default function HomePage() {
                     {/* Right: Embedded Live Countdown Timer & Actions */}
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 lg:self-center">
                         <div className="flex flex-col items-start sm:items-end justify-center">
-                            <CountdownTimer targetDate={LAUNCH_DATE} compact={true} />
+                            <CountdownTimer targetDate={liveStats.launchDate || LAUNCH_DATE} compact={true} />
                         </div>
 
                         <div className="flex items-center gap-2 self-stretch sm:self-auto pt-2 sm:pt-0 sm:border-l sm:border-[var(--pl-border-subtle)] sm:pl-4">
@@ -328,49 +328,45 @@ export default function HomePage() {
                                 style={{ width: "auto", padding: "8px 16px", fontSize: "12px" }}
                             >
                                 <Share2 className="w-3.5 h-3.5 text-[#8C56FC]" />
-                                <span>{copied ? "Copied!" : "Invite Friends"}</span>
+                                <span>Invite VIP</span>
                             </button>
-
                             <button
                                 type="button"
                                 onClick={handleLogout}
-                                className="pl-btn pl-btn-outline flex-1 sm:flex-initial"
-                                style={{ width: "auto", padding: "8px 16px", fontSize: "12px" }}
+                                className="pl-btn pl-btn-outline p-2 text-rose-500 hover:bg-rose-500/10 border-rose-500/30"
                                 title="Sign Out"
                             >
-                                <LogOut className="w-3.5 h-3.5 text-red-400" />
-                                <span>Sign Out</span>
+                                <LogOut className="w-4 h-4" />
                             </button>
                         </div>
                     </div>
                 </div>
 
-                {/* Real Data Metrics Grid with 3D Hover Elevation */}
+                {/* Live Real Database Metrics Grid */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    {metrics.map((stat, i) => {
-                        const Icon = stat.icon;
+                    {metrics.map((metric, i) => {
+                        const IconComponent = metric.icon;
                         return (
-                            <div
-                                key={i}
-                                className="pl-glass-card p-4 sm:p-5 flex flex-col justify-between hover:border-[#8C56FC] hover:shadow-[0_16px_36px_rgba(140,86,252,0.16)] hover:-translate-y-1.5 transition-all duration-300"
-                            >
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs font-semibold text-[var(--pl-text-muted)] tracking-wide">{stat.label}</span>
+                            <div key={i} className="pl-glass-card p-4 sm:p-5 flex flex-col justify-between hover:translate-y-[-2px] transition-transform duration-200">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="text-xs font-semibold text-[var(--pl-text-muted)] tracking-wide">
+                                        {metric.label}
+                                    </span>
                                     <div
-                                        className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"
-                                        style={{ background: stat.bg, color: stat.color }}
+                                        className="w-8 h-8 rounded-xl flex items-center justify-center shadow-xs"
+                                        style={{ background: metric.bg, color: metric.color }}
                                     >
-                                        <Icon className="w-4 h-4" />
+                                        <IconComponent className="w-4 h-4" />
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="text-xl sm:text-2xl font-extrabold tracking-tight text-[var(--pl-text-primary)]">
-                                        {stat.value}
+                                    <div className="text-xl sm:text-2xl font-bold text-[var(--pl-text-primary)] mb-1 flex items-baseline gap-1">
+                                        {metric.value}
                                     </div>
-                                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-[var(--pl-text-secondary)] mt-1">
-                                        {stat.trend === "up" && <TrendingUp className="w-3 h-3 text-emerald-400" />}
-                                        {stat.trend === "live" && <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse inline-block" />}
-                                        <span className="truncate">{stat.change}</span>
+                                    <div className="text-[11px] text-[var(--pl-text-secondary)] flex items-center gap-1 font-medium">
+                                        {metric.trend === "up" && <TrendingUp className="w-3 h-3 text-emerald-500 flex-shrink-0" />}
+                                        {metric.trend === "live" && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse flex-shrink-0 inline-block" />}
+                                        <span className="truncate">{metric.change}</span>
                                     </div>
                                 </div>
                             </div>
@@ -390,14 +386,14 @@ export default function HomePage() {
                                 <div>
                                     <h2 className="text-base sm:text-lg font-semibold text-[var(--pl-text-primary)] flex items-center gap-2">
                                         <Activity className="w-5 h-5 text-[#8C56FC]" />
-                                        Development & Rollout Roadmap
+                                        Development &amp; Rollout Roadmap
                                     </h2>
                                     <p className="text-xs text-[var(--pl-text-secondary)] mt-0.5">
                                         Live backend and product infrastructure milestones
                                     </p>
                                 </div>
                                 <span className="pl-badge text-xs" style={{ background: "rgba(16, 185, 129, 0.15)", color: "#10b981" }}>
-                                    Phase 3 of 4
+                                    {liveStats.phaseTitle || "Phase 3 of 4"}
                                 </span>
                             </div>
 
