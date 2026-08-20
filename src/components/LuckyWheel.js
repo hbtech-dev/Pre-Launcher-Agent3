@@ -11,9 +11,12 @@ import {
     ArrowRight,
     Trophy,
     Flame,
-    RotateCw
+    RotateCw,
+    Lock,
+    ShieldCheck
 } from "lucide-react";
 import toast from "react-hot-toast";
+import VerifiedBadge from "@/components/VerifiedBadge";
 
 // 8 Slices (45 deg each) — Alternating Reward & Empty as requested (Max reward Rs 500)
 const SLOTS = [
@@ -107,7 +110,7 @@ const SLOTS = [
     }
 ];
 
-export default function LuckyWheel() {
+export default function LuckyWheel({ isVerified = false, onOpenVerification }) {
     const [isOpen, setIsOpen] = useState(false);
     const [isSpinning, setIsSpinning] = useState(false);
     const [rotation, setRotation] = useState(0);
@@ -116,6 +119,7 @@ export default function LuckyWheel() {
     const [resultModal, setResultModal] = useState(null);
     const [isTicking, setIsTicking] = useState(false);
     const [totalCredits, setTotalCredits] = useState(500);
+    const [showVerificationGate, setShowVerificationGate] = useState(false);
 
     const rotationRef = useRef(0);
 
@@ -168,6 +172,11 @@ export default function LuckyWheel() {
     }, []);
 
     const spinWheel = () => {
+        if (!isVerified) {
+            setShowVerificationGate(true);
+            return;
+        }
+
         if (isSpinning || hasSpunToday) return;
 
         setIsSpinning(true);
@@ -279,6 +288,35 @@ export default function LuckyWheel() {
                                 )}
                             </div>
                         </div>
+
+                        {/* WhatsApp Verification Required Notice Banner */}
+                        {!isVerified && (
+                            <div className="mb-3 p-3 rounded-xl bg-[#0095F6]/10 border border-[#0095F6]/30 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-left">
+                                <div className="flex items-center gap-2.5">
+                                    <div className="w-8 h-8 rounded-lg bg-[#0095F6]/20 flex items-center justify-center flex-shrink-0 text-[#0095F6]">
+                                        <Lock className="w-4 h-4" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-[var(--pl-text-primary)] flex items-center gap-1">
+                                            WhatsApp Verification Required <VerifiedBadge size="xs" />
+                                        </p>
+                                        <p className="text-[10px] text-[var(--pl-text-secondary)] leading-tight">
+                                            Verify your number on WhatsApp to unlock spins &amp; earn your Verified Blue Badge.
+                                        </p>
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setIsOpen(false);
+                                        if (onOpenVerification) onOpenVerification();
+                                    }}
+                                    className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#0095F6] text-white hover:bg-[#0080d4] transition-colors flex-shrink-0 shadow-xs"
+                                >
+                                    Verify on WhatsApp →
+                                </button>
+                            </div>
+                        )}
 
                         {/* ── THE CIRCULAR WHEEL ── */}
                         <div className="relative mx-auto my-3 flex items-center justify-center" style={{ width: "310px", height: "310px" }}>
@@ -502,6 +540,60 @@ export default function LuckyWheel() {
                         >
                             Continue <ArrowRight className="w-4 h-4 ml-1" />
                         </button>
+                    </div>
+                </div>
+            )}
+
+            {/* ── WHATSAPP VERIFICATION GATE MODAL ── */}
+            {showVerificationGate && (
+                <div className="pl-modal-backdrop" onClick={() => setShowVerificationGate(false)}>
+                    <div className="pl-modal-card" style={{ maxWidth: "440px" }} onClick={(e) => e.stopPropagation()}>
+                        <button
+                            type="button"
+                            onClick={() => setShowVerificationGate(false)}
+                            className="absolute top-4 right-4 text-[var(--pl-text-muted)] hover:text-white p-1 rounded-lg"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+
+                        <div className="pl-modal-icon-ring" style={{ background: "rgba(0, 149, 246, 0.15)", border: "2px solid #0095F6" }}>
+                            <Lock className="w-10 h-10 text-[#0095F6]" />
+                        </div>
+
+                        <span className="pl-badge text-xs mb-2" style={{ background: "rgba(0, 149, 246, 0.15)", color: "#0095F6" }}>
+                            <VerifiedBadge size="xs" /> Verification Required
+                        </span>
+
+                        <h3 className="pl-heading text-2xl mb-1">
+                            Verify via WhatsApp
+                        </h3>
+
+                        <p className="text-xs sm:text-sm text-[var(--pl-text-secondary)] mb-5 leading-relaxed">
+                            To unlock daily spins on the <strong>Lucky Wheel</strong> and claim your official <strong>Blue Verified Badge</strong>, please verify your WhatsApp phone number.
+                        </p>
+
+                        <div className="space-y-2.5">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setShowVerificationGate(false);
+                                    setIsOpen(false);
+                                    if (onOpenVerification) onOpenVerification();
+                                }}
+                                className="pl-btn pl-btn-primary w-full"
+                                style={{ background: "#0095F6", borderColor: "#0095F6" }}
+                            >
+                                Verify Phone on WhatsApp →
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => setShowVerificationGate(false)}
+                                className="pl-btn pl-btn-outline w-full text-xs"
+                            >
+                                Maybe Later
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

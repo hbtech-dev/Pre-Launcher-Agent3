@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { secureStorage } from "@/utils/secureStorage";
-import { statsAPI } from "@/config/api";
+import { statsAPI, phoneVerificationAPI } from "@/config/api";
 import PreLauncherLayout from "@/components/PreLauncherLayout";
 import CountdownTimer from "@/components/CountdownTimer";
 import ProgressMap from "@/components/ProgressMap";
 import LuckyWheel from "@/components/LuckyWheel";
+import VerifiedBadge from "@/components/VerifiedBadge";
+import PhoneVerificationModal from "@/components/PhoneVerificationModal";
 import {
     ShieldCheck,
     User,
@@ -135,6 +137,8 @@ export default function HomePage() {
         platformStatus: "80%"
     });
     const [loadingStats, setLoadingStats] = useState(true);
+    const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+    const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
 
     useEffect(() => {
         const session = secureStorage.getUserSession();
@@ -164,7 +168,20 @@ export default function HomePage() {
             }
         };
 
+        // Check if user is WhatsApp phone verified
+        const checkPhoneVerification = async () => {
+            try {
+                const res = await phoneVerificationAPI.getStatus();
+                if (res && (res.status === "success" || res.success) && res.data) {
+                    setIsPhoneVerified(Boolean(res.data.isVerified));
+                }
+            } catch (err) {
+                console.error("Phone verification check error:", err);
+            }
+        };
+
         fetchLiveStats();
+        checkPhoneVerification();
     }, [router]);
 
     const handleLogout = () => {
@@ -183,7 +200,6 @@ export default function HomePage() {
 
     const displayName = user.fullName || user.name || (role === "agent" ? "Verified Agent" : "Valued Member");
     const displayEmail = user.email || "Registered Member";
-    const displayCity = user.operatingCity || user.location || (user.residentialAddress?.permanent ? user.residentialAddress.permanent.split(",").pop().trim() : "Islamabad / Rawalpindi");
 
     // Dynamic metrics based on REAL database values
     const metrics = [
@@ -258,9 +274,10 @@ export default function HomePage() {
                             {role === "agent" ? <Building2 className="w-7 h-7" /> : <User className="w-7 h-7" />}
                         </div>
                         <div>
-                            <div className="flex items-center gap-2.5 flex-wrap">
-                                <h1 className="font-semibold text-lg sm:text-2xl text-[var(--pl-text-primary)]">
-                                    {displayName}
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <h1 className="font-semibold text-lg sm:text-2xl text-[var(--pl-text-primary)] flex items-center gap-1.5">
+                                    <span>{displayName}</span>
+                                    {isPhoneVerified && <VerifiedBadge size="sm" />}
                                 </h1>
                                 <span
                                     className="pl-badge text-xs px-2.5 py-1 font-semibold"
@@ -271,14 +288,21 @@ export default function HomePage() {
                                 >
                                     {role === "agent" ? "🛡️ Verified Partner Agent" : "🌟 Early VIP Host"}
                                 </span>
+
+                                {!isPhoneVerified && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsVerificationModalOpen(true)}
+                                        className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#0095F6]/10 text-[#0095F6] border border-[#0095F6]/30 hover:bg-[#0095F6]/20 transition-all cursor-pointer"
+                                        title="Verify your WhatsApp number to unlock Lucky Wheel spins"
+                                    >
+                                        <VerifiedBadge size="xs" /> Get Verified Badge
+                                    </button>
+                                )}
                             </div>
                             <div className="flex items-center gap-3 text-xs sm:text-sm text-[var(--pl-text-secondary)] mt-1.5 flex-wrap">
                                 <span className="flex items-center gap-1.5 font-medium">
                                     <Mail className="w-3.5 h-3.5 text-[#8C56FC]" /> {displayEmail}
-                                </span>
-                                <span className="opacity-40">•</span>
-                                <span className="flex items-center gap-1.5 font-medium">
-                                    <MapPin className="w-3.5 h-3.5 text-[#FF8901]" /> {displayCity}
                                 </span>
                             </div>
                         </div>
@@ -539,7 +563,17 @@ export default function HomePage() {
             </div>
 
             {/* Floating Lucky Spin Wheel */}
-            <LuckyWheel />
+            <LuckyWheel
+                isVerified={isPhoneVerified}
+                onOpenVerification={() => setIsVerificationModalOpen(true)}
+            />
+
+            {/* WhatsApp Phone Verification Modal */}
+            <PhoneVerificationModal
+                isOpen={isVerificationModalOpen}
+                onClose={() => setIsVerificationModalOpen(false)}
+                onVerified={() => setIsPhoneVerified(true)}
+            />
         </PreLauncherLayout>
     );
 }

@@ -186,3 +186,72 @@ export const statsAPI = {
     return performGetRequest('/api/v1/public/stats');
   }
 };
+
+async function performAuthRequest(endpoint, method = 'GET', body = null) {
+  const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  
+  let token = null;
+  if (typeof window !== 'undefined') {
+    try {
+      const { secureStorage } = require('@/utils/secureStorage');
+      const session = secureStorage.getUserSession();
+      token = session?.token || null;
+    } catch (e) {}
+  }
+
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const fetchOptions = {
+    method,
+    headers
+  };
+  if (body) {
+    fetchOptions.body = JSON.stringify(body);
+  }
+
+  try {
+    const res = await fetch(`${PRIMARY_API_URL}${endpoint}`, fetchOptions);
+    const data = await res.json();
+    if (data.status === 'success') return data;
+
+    if (isLocal && PRIMARY_API_URL !== LOCAL_FALLBACK_URL) {
+      try {
+        const localRes = await fetch(`${LOCAL_FALLBACK_URL}${endpoint}`, fetchOptions);
+        const localData = await localRes.json();
+        if (localData.status === 'success') return localData;
+      } catch (e) {}
+    }
+    return data;
+  } catch (err) {
+    if (isLocal) {
+      try {
+        const localRes = await fetch(`${LOCAL_FALLBACK_URL}${endpoint}`, fetchOptions);
+        return await localRes.json();
+      } catch (localErr) {
+        return { status: 'error', message: 'Unable to connect to server.' };
+      }
+    }
+    return { status: 'error', message: err.message || 'Network error' };
+  }
+}
+
+export const phoneVerificationAPI = {
+  sendCode: async (phone) => {
+    return performAuthRequest('/api/v1/phone-verification/send-code', 'POST', { phone });
+  },
+  verify: async (code) => {
+    return performAuthRequest('/api/v1/phone-verification/verify', 'POST', { code });
+  },
+  getStatus: async () => {
+    return performAuthRequest('/api/v1/phone-verification/status', 'GET');
+  },
+  resend: async () => {
+    return performAuthRequest('/api/v1/phone-verification/resend', 'POST');
+  }
+};
+
