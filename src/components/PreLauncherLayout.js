@@ -5,21 +5,27 @@ import Link from "next/link";
 import Particles from "./Particles";
 
 export default function PreLauncherLayout({ children, showBack = false, backUrl = "/welcome", wide = false, topbarPosition = "top", footer = null }) {
-    const [theme, setTheme] = useState("light");
+    const [theme, setTheme] = useState(() => {
+        if (typeof window !== "undefined") {
+            return document.documentElement.getAttribute("data-theme") || localStorage.getItem("pl_theme") || "light";
+        }
+        return "light";
+    });
 
     useEffect(() => {
-        const saved = localStorage.getItem("pl_theme");
-        if (saved) {
-            setTheme(saved);
-        } else {
-            setTheme("light");
-            localStorage.setItem("pl_theme", "light");
-        }
+        const saved = localStorage.getItem("pl_theme") || "light";
+        setTheme(saved);
+        document.documentElement.classList.remove("pl-theme-dark", "pl-theme-light");
+        document.documentElement.classList.add("pl-theme-" + saved);
+        document.documentElement.setAttribute("data-theme", saved);
     }, []);
 
     const changeTheme = (newTheme) => {
         setTheme(newTheme);
         localStorage.setItem("pl_theme", newTheme);
+        document.documentElement.classList.remove("pl-theme-dark", "pl-theme-light");
+        document.documentElement.classList.add("pl-theme-" + newTheme);
+        document.documentElement.setAttribute("data-theme", newTheme);
     };
 
     return (

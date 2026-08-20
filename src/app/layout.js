@@ -86,6 +86,21 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/icon.png" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('pl_theme');
+                  var theme = saved ? saved : 'light';
+                  document.documentElement.classList.remove('pl-theme-dark', 'pl-theme-light');
+                  document.documentElement.classList.add('pl-theme-' + theme);
+                  document.documentElement.setAttribute('data-theme', theme);
+                } catch (e) {}
+              })();
+            `
+          }}
+        />
       </head>
       <body suppressHydrationWarning>{children}</body>
     </html>

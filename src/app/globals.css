@@ -19,4 +19,24 @@ html, body {
   font-family: 'Poppins', sans-serif;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  color: #0f172a;
+  transition: background-color 0.15s ease;
+}
+
+html.pl-theme-dark,
+html.pl-theme-dark body,
+[data-theme="dark"],
+[data-theme="dark"] body {
+  background-color: #07090e !important;
+  color: #ffffff !important;
+}
+
+html.pl-theme-light,
+html.pl-theme-light body,
+[data-theme="light"],
+[data-theme="light"] body {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
 }
