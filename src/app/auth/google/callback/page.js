@@ -67,7 +67,7 @@ function GoogleCallbackHandler() {
                     );
                     secureStorage.setUserProfile(agent);
                 } else {
-                    setStatus("Verifying Customer profile...");
+                    setStatus("Verifying Host profile...");
                     const res = await fetch(`${apiUrl}/api/v1/auth/google/code`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -76,7 +76,7 @@ function GoogleCallbackHandler() {
                     const data = await res.json();
 
                     if (!res.ok || data?.status !== "success") {
-                        throw new Error(data?.message || data?.error || "Customer Google verification failed");
+                        throw new Error(data?.message || data?.error || "Host Google verification failed");
                     }
 
                     const user = data.data?.user || {};

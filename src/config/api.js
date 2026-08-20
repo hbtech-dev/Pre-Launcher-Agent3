@@ -118,6 +118,18 @@ export const authAPI = {
 
   register: async (userData) => {
     return performRequest('/api/v1/auth/register', userData);
+  },
+
+  forgotPassword: async (email) => {
+    return performRequest('/api/v1/auth/forgot-password', { email });
+  },
+
+  resetPassword: async (token, password) => {
+    return performRequest('/api/v1/auth/reset-password', { token, password });
+  },
+
+  verifyResetToken: async (token) => {
+    return performGetRequest(`/api/v1/auth/verify-reset-token/${token}`);
   }
 };
 

@@ -94,7 +94,7 @@ export default function NotFound() {
 
                             <Link href="/user/login" style={{ textDecoration: "none" }}>
                                 <button type="button" className="pl-btn pl-btn-outline w-full text-xs" style={{ padding: "10px 8px" }}>
-                                    <User className="w-3.5 h-3.5 mr-1 text-[#8C56FC]" /> Customer Login
+                                    <User className="w-3.5 h-3.5 mr-1 text-[#8C56FC]" /> Host Login
                                 </button>
                             </Link>
                         </div>

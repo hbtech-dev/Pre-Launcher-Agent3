@@ -30,12 +30,12 @@ const MILESTONES = [
         id: "phase-2",
         phase: "Phase 2",
         title: "Web Application & Portals",
-        desc: "Complete responsive customer portal, verified agent dashboards, property listing engines, and live lead management.",
+        desc: "Complete responsive host portal, verified agent dashboards, property listing engines, and live lead management.",
         status: "completed",
         statusText: "Completed",
         icon: Globe,
         color: "#10b981",
-        tags: ["Customer Web", "Agent Dashboard", "Live Chat", "Society Maps"],
+        tags: ["Host Web", "Agent Dashboard", "Live Chat", "Society Maps"],
         completion: "100%"
     },
     {

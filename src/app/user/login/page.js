@@ -33,7 +33,7 @@ export default function UserLoginPage() {
                 secureStorage.setUserSession(token, refreshToken, userId, "user");
                 secureStorage.setUserProfile(userData);
 
-                toast.success(`Welcome back, ${userData.name || "Customer"}!`);
+                toast.success(`Welcome back, ${userData.name || "Host"}!`);
                 setTimeout(() => {
                     router.push("/home");
                 }, 400);
@@ -87,7 +87,7 @@ export default function UserLoginPage() {
 
                 <div className="mb-6">
                     <h1 className="pl-heading mb-1.5">Welcome Back</h1>
-                    <p className="pl-subtext">Sign in to your customer account</p>
+                    <p className="pl-subtext">Sign in to your host account</p>
                 </div>
 
                 <div className="pl-glass-card">
@@ -114,7 +114,9 @@ export default function UserLoginPage() {
                         <div className="pl-input-group">
                             <div className="flex justify-between items-center mb-1">
                                 <label className="pl-label" style={{ marginBottom: 0 }}>Password</label>
-                                <span className="pl-link text-xs">Forgot?</span>
+                                <Link href="/forgot-password" style={{ textDecoration: "none" }}>
+                                    <span className="pl-link text-xs">Forgot?</span>
+                                </Link>
                             </div>
                             <div className="pl-input-wrapper">
                                 <input
@@ -142,7 +144,7 @@ export default function UserLoginPage() {
                             className="pl-btn pl-btn-primary mt-2"
                             disabled={isLoading}
                         >
-                            {isLoading ? "Authenticating Customer..." : "Sign In to Pre-Launcher"}
+                            {isLoading ? "Authenticating Host..." : "Sign In to Pre-Launcher"}
                         </button>
                     </form>
 

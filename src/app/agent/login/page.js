@@ -168,7 +168,9 @@ export default function AgentLoginPage() {
                             <div className="pl-input-group">
                                 <div className="flex justify-between items-center mb-1">
                                     <label className="pl-label" style={{ marginBottom: 0 }}>Password</label>
-                                    <span className="pl-link text-xs">Forgot?</span>
+                                    <Link href="/forgot-password" style={{ textDecoration: "none" }}>
+                                        <span className="pl-link text-xs">Forgot?</span>
+                                    </Link>
                                 </div>
                                 <div className="pl-input-wrapper">
                                     <input

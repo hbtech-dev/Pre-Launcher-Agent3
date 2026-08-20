@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { secureStorage } from "@/utils/secureStorage";
 import { statsAPI } from "@/config/api";
 import PreLauncherLayout from "@/components/PreLauncherLayout";
 import CountdownTimer from "@/components/CountdownTimer";
-import DailyReward from "@/components/DailyReward";
 import ProgressMap from "@/components/ProgressMap";
 import LuckyWheel from "@/components/LuckyWheel";
 import {
@@ -213,7 +213,7 @@ export default function HomePage() {
                                         color: role === "agent" ? "#FF8901" : "#8C56FC"
                                     }}
                                 >
-                                    {role === "agent" ? "🛡️ Verified Partner Agent" : "🌟 Early VIP Customer"}
+                                    {role === "agent" ? "🛡️ Verified Partner Agent" : "🌟 Early VIP Host"}
                                 </span>
                             </div>
                             <div className="flex items-center gap-3 text-xs sm:text-sm text-[var(--pl-text-secondary)] mt-1.5 flex-wrap">
@@ -345,9 +345,6 @@ export default function HomePage() {
                     {/* Right Column (5 Cols on desktop) */}
                     <div className="lg:col-span-5 space-y-6">
 
-                        {/* Interactive Daily Pre-Launch Rewards & Credit Vault */}
-                        <DailyReward role={role} />
-
                         {/* Announcements & Platform Live Feed */}
                         <div className="pl-glass-card p-6">
                             <div className="flex items-center justify-between mb-4">
@@ -396,7 +393,16 @@ export default function HomePage() {
 
                 {/* Footer */}
                 <div className="text-center pt-6 pb-4 border-t" style={{ borderColor: "var(--pl-border-subtle)" }}>
-                    <p className="text-xs text-[var(--pl-text-muted)]">
+                    <div className="flex justify-center gap-4 mb-2 text-xs">
+                        <Link href="/privacy" className="pl-link hover:underline text-[var(--pl-text-muted)]" style={{ color: "var(--pl-text-muted)", fontSize: "11px", textDecoration: "none" }}>
+                            Privacy Policy &amp; Data Protection
+                        </Link>
+                        <span className="text-[var(--pl-text-muted)] opacity-40 text-[11px]">•</span>
+                        <Link href="/terms" className="pl-link hover:underline text-[var(--pl-text-muted)]" style={{ color: "var(--pl-text-muted)", fontSize: "11px", textDecoration: "none" }}>
+                            Terms &amp; Conditions
+                        </Link>
+                    </div>
+                    <p className="text-xs text-[var(--pl-text-muted)]" style={{ fontSize: "11px" }}>
                         © 2026 Agent3 Technologies Ltd. • Connected to Production Cloud • All rights reserved.
                     </p>
                 </div>
