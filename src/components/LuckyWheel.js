@@ -30,11 +30,11 @@ const SLOTS = [
         label: "Rs 2500",
         type: "reward",
         amount: 2500,
-        subtext: "Mega Cash 👑",
+        subtext: "Grand Prize 👑",
         color: "#f59e0b",
         bg: "#3b0764",
         textFill: "#fbbf24",
-        isJackpot: false
+        isJackpot: true
     },
     {
         id: 1,
@@ -370,7 +370,7 @@ export default function LuckyWheel({ isVerified = false, onOpenVerification }) {
                                 SPIN LUCKY WHEEL!
                             </h2>
                             <p className="text-xs text-[var(--pl-text-secondary)] mt-1 max-w-sm mx-auto">
-                                Spin the wheel daily for a chance to win <strong className="text-[#10b981]">Rs 200 Cash</strong> sent to your JazzCash / EasyPaisa!
+                                Spin the wheel daily for a chance to win cash rewards sent directly to your JazzCash / EasyPaisa!
                             </p>
                             <div className="text-[11px] text-[var(--pl-text-muted)] mt-1 flex items-center justify-center gap-1">
                                 <Clock className="w-3 h-3 text-[#FF8901]" />
@@ -619,8 +619,8 @@ export default function LuckyWheel({ isVerified = false, onOpenVerification }) {
                                 <span className="text-[10px] text-[var(--pl-text-muted)] font-semibold uppercase tracking-wider block">
                                     Grand Prize
                                 </span>
-                                <span className="text-xs font-bold text-[#10b981]">
-                                    Rs 200 Cash 💰
+                                <span className="text-xs font-bold text-[#f59e0b]">
+                                    Rs 2500 Cash 💰
                                 </span>
                             </div>
                         </div>

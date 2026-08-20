@@ -10,6 +10,7 @@ import ProgressMap from "@/components/ProgressMap";
 import LuckyWheel from "@/components/LuckyWheel";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import PhoneVerificationModal from "@/components/PhoneVerificationModal";
+import HomeSkeleton from "@/components/HomeSkeleton";
 import {
     ShieldCheck,
     User,
@@ -248,16 +249,7 @@ export default function HomePage() {
     ];
 
     if (isCheckingAuth || !isAuthenticated) {
-        return (
-            <PreLauncherLayout wide={true}>
-                <div className="flex-1 flex items-center justify-center min-h-[50vh]">
-                    <div className="flex flex-col items-center gap-3">
-                        <div className="w-8 h-8 rounded-full border-2 border-[#8C56FC] border-t-transparent animate-spin" />
-                        <span className="text-xs text-[var(--pl-text-muted)] font-medium">Verifying authorization...</span>
-                    </div>
-                </div>
-            </PreLauncherLayout>
-        );
+        return <HomeSkeleton />;
     }
 
     return (
@@ -265,28 +257,28 @@ export default function HomePage() {
             <Toaster position="top-center" />
             <div className="flex-1 flex flex-col py-2 space-y-6">
 
-                {/* 3D Sleek Top Profile Card with Embedded Countdown Timer */}
-                <div className="pl-glass-card p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-5 border border-[#8C56FC]/20 shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:border-[#8C56FC]/40 transition-all duration-300">
-                    {/* Left: User / Agent Info */}
-                    <div className="flex items-center gap-4">
+                {/* 3D Sleek Top Profile Card with Centered Countdown Timer */}
+                <div className="pl-glass-card p-4 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-5 border border-[#8C56FC]/20 shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:border-[#8C56FC]/40 transition-all duration-300">
+                    {/* Left Column: User / Agent Info */}
+                    <div className="flex items-center gap-3.5 sm:gap-4 flex-1 min-w-0">
                         <div
-                            className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-white font-semibold text-xl shadow-lg flex-shrink-0 ring-2 ring-[#8C56FC]/30"
+                            className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-white font-semibold text-xl shadow-lg flex-shrink-0 ring-2 ring-[#8C56FC]/30"
                             style={{
                                 background: role === "agent"
                                     ? "linear-gradient(135deg, #FF8901 0%, #d97000 100%)"
                                     : "linear-gradient(135deg, #8C56FC 0%, #6e3dd9 100%)"
                             }}
                         >
-                            {role === "agent" ? <Building2 className="w-7 h-7" /> : <User className="w-7 h-7" />}
+                            {role === "agent" ? <Building2 className="w-6 h-6 sm:w-7 sm:h-7" /> : <User className="w-6 h-6 sm:w-7 sm:h-7" />}
                         </div>
-                        <div>
+                        <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                                <h1 className="font-semibold text-lg sm:text-2xl text-[var(--pl-text-primary)] flex items-center gap-1.5">
+                                <h1 className="font-semibold text-lg sm:text-2xl text-[var(--pl-text-primary)] flex items-center gap-1.5 truncate">
                                     <span>{displayName}</span>
                                     {role !== "agent" && isPhoneVerified && <VerifiedBadge size="sm" />}
                                 </h1>
                                 <span
-                                    className="pl-badge text-xs px-2.5 py-1 font-semibold"
+                                    className="pl-badge text-xs px-2.5 py-1 font-semibold whitespace-nowrap"
                                     style={{
                                         background: role === "agent" ? "rgba(255, 137, 1, 0.15)" : "rgba(140, 86, 252, 0.15)",
                                         color: role === "agent" ? "#FF8901" : "#8C56FC"
@@ -299,7 +291,7 @@ export default function HomePage() {
                                     <button
                                         type="button"
                                         onClick={() => setIsVerificationModalOpen(true)}
-                                        className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#0095F6]/10 text-[#0095F6] border border-[#0095F6]/30 hover:bg-[#0095F6]/20 transition-all cursor-pointer"
+                                        className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#0095F6]/10 text-[#0095F6] border border-[#0095F6]/30 hover:bg-[#0095F6]/20 transition-all cursor-pointer whitespace-nowrap"
                                         title="Verify your WhatsApp number to unlock Lucky Wheel spins"
                                     >
                                         <VerifiedBadge size="xs" /> Get Verified Badge
@@ -307,38 +299,39 @@ export default function HomePage() {
                                 )}
                             </div>
                             <div className="flex items-center gap-3 text-xs sm:text-sm text-[var(--pl-text-secondary)] mt-1.5 flex-wrap">
-                                <span className="flex items-center gap-1.5 font-medium">
-                                    <Mail className="w-3.5 h-3.5 text-[#8C56FC]" /> {displayEmail}
+                                <span className="flex items-center gap-1.5 font-medium truncate">
+                                    <Mail className="w-3.5 h-3.5 text-[#8C56FC] flex-shrink-0" /> {displayEmail}
                                 </span>
                             </div>
                         </div>
                     </div>
 
-                    {/* Right: Embedded Live Countdown Timer & Actions */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 lg:self-center">
-                        <div className="flex flex-col items-start sm:items-end justify-center">
-                            <CountdownTimer targetDate={liveStats.launchDate || LAUNCH_DATE} compact={true} />
-                        </div>
+                    {/* Center Column: Countdown Timer in the Exact Center */}
+                    <div className="flex items-center justify-center flex-shrink-0 py-2 lg:py-0 lg:px-6">
+                        <CountdownTimer targetDate={liveStats.launchDate || LAUNCH_DATE} compact={true} />
+                    </div>
 
-                        <div className="flex items-center gap-2 self-stretch sm:self-auto pt-2 sm:pt-0 sm:border-l sm:border-[var(--pl-border-subtle)] sm:pl-4">
-                            <button
-                                type="button"
-                                onClick={handleShare}
-                                className="pl-btn pl-btn-outline flex-1 sm:flex-initial"
-                                style={{ width: "auto", padding: "8px 16px", fontSize: "12px" }}
-                            >
-                                <Share2 className="w-3.5 h-3.5 text-[#8C56FC]" />
-                                <span>Invite VIP</span>
-                            </button>
-                            <button
-                                type="button"
-                                onClick={handleLogout}
-                                className="pl-btn pl-btn-outline p-2 text-rose-500 hover:bg-rose-500/10 border-rose-500/30"
-                                title="Sign Out"
-                            >
-                                <LogOut className="w-4 h-4" />
-                            </button>
-                        </div>
+                    {/* Right Column: Actions (Original Invite Friends & Sign Out Buttons) */}
+                    <div className="flex items-center justify-start lg:justify-end gap-2.5 flex-wrap sm:flex-nowrap flex-shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-[var(--pl-border-subtle)]">
+                        <button
+                            type="button"
+                            onClick={handleShare}
+                            className="pl-btn pl-btn-outline flex-1 sm:flex-initial"
+                            style={{ width: "auto", padding: "8px 16px", fontSize: "12px" }}
+                        >
+                            <Share2 className="w-3.5 h-3.5 text-[#8C56FC]" />
+                            <span>{copied ? "Copied!" : "Invite Friends"}</span>
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={handleLogout}
+                            className="pl-btn pl-btn-outline flex-1 sm:flex-initial"
+                            style={{ width: "auto", padding: "8px 16px", fontSize: "12px" }}
+                        >
+                            <LogOut className="w-3.5 h-3.5 text-red-400" />
+                            <span>Sign Out</span>
+                        </button>
                     </div>
                 </div>
 
@@ -361,7 +354,11 @@ export default function HomePage() {
                                 </div>
                                 <div>
                                     <div className="text-xl sm:text-2xl font-bold text-[var(--pl-text-primary)] mb-1 flex items-baseline gap-1">
-                                        {metric.value}
+                                        {loadingStats && metric.value === "..." ? (
+                                            <div className="h-7 w-20 pl-shimmer rounded my-0.5" />
+                                        ) : (
+                                            metric.value
+                                        )}
                                     </div>
                                     <div className="text-[11px] text-[var(--pl-text-secondary)] flex items-center gap-1 font-medium">
                                         {metric.trend === "up" && <TrendingUp className="w-3 h-3 text-emerald-500 flex-shrink-0" />}
