@@ -154,26 +154,32 @@ export const agentAPI = {
 
 async function performGetRequest(endpoint) {
   const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  const primaryUrl = getBaseUrl();
+  const secondaryUrl = primaryUrl === LOCAL_FALLBACK_URL ? PRIMARY_API_URL : LOCAL_FALLBACK_URL;
 
   try {
-    const res = await fetch(`${PRIMARY_API_URL}${endpoint}`);
+    const res = await fetch(`${primaryUrl}${endpoint}`);
+    if (!res.ok && res.status === 404 && isLocal && primaryUrl !== secondaryUrl) {
+      const secRes = await fetch(`${secondaryUrl}${endpoint}`);
+      return await secRes.json();
+    }
     const data = await res.json();
-    if (data.status === 'success') return data;
+    if (data.status === 'success' || data.status === 200 || data.success) return data;
 
-    if (isLocal && PRIMARY_API_URL !== LOCAL_FALLBACK_URL) {
+    if (isLocal && primaryUrl !== secondaryUrl) {
       try {
-        const localRes = await fetch(`${LOCAL_FALLBACK_URL}${endpoint}`);
-        const localData = await localRes.json();
-        if (localData.status === 'success') return localData;
+        const secRes = await fetch(`${secondaryUrl}${endpoint}`);
+        const secData = await secRes.json();
+        if (secData.status === 'success' || secData.status === 200 || secData.success) return secData;
       } catch (e) {}
     }
     return data;
   } catch (err) {
-    if (isLocal) {
+    if (isLocal && primaryUrl !== secondaryUrl) {
       try {
-        const localRes = await fetch(`${LOCAL_FALLBACK_URL}${endpoint}`);
-        return await localRes.json();
-      } catch (localErr) {
+        const secRes = await fetch(`${secondaryUrl}${endpoint}`);
+        return await secRes.json();
+      } catch (secErr) {
         return { status: 'error', message: 'Unable to connect to server.' };
       }
     }

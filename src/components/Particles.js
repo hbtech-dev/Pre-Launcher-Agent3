@@ -7,31 +7,41 @@ const CONFETTI_COLORS = [
     "#e879f9", "#fb923c", "#38bdf8", "#facc15",
 ];
 
+const CELEBRATION_COLORS = [
+    "#f59e0b", "#fbbf24", "#facc15", "#8C56FC",
+    "#a855f7", "#ec4899", "#10b981", "#38bdf8",
+    "#ffffff", "#f43f5e", "#6366f1"
+];
+
 const SHAPES = ["circle", "square", "star", "ribbon"];
+const CELEBRATION_SHAPES = ["star", "ribbon", "circle", "sparkle", "trophy_glow"];
 
 function randomBetween(a, b) {
     return a + Math.random() * (b - a);
 }
 
-function createConfetti(canvas) {
-    const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+function createConfetti(canvas, isCelebration = false) {
+    const shapeList = isCelebration ? CELEBRATION_SHAPES : SHAPES;
+    const colorList = isCelebration ? CELEBRATION_COLORS : CONFETTI_COLORS;
+    const shape = shapeList[Math.floor(Math.random() * shapeList.length)];
+    
     return {
         x: Math.random() * canvas.width,
         y: randomBetween(-canvas.height * 0.3, -20),
-        size: randomBetween(4, 10),
-        color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
-        speedY: randomBetween(0.6, 2.2),
-        speedX: randomBetween(-0.8, 0.8),
+        size: isCelebration ? randomBetween(5, 13) : randomBetween(4, 10),
+        color: colorList[Math.floor(Math.random() * colorList.length)],
+        speedY: isCelebration ? randomBetween(0.8, 2.8) : randomBetween(0.6, 2.2),
+        speedX: randomBetween(-1.2, 1.2),
         rotation: Math.random() * 360,
-        rotationSpeed: randomBetween(-3, 3),
-        wobble: randomBetween(0.5, 2),
-        wobbleSpeed: randomBetween(0.02, 0.06),
+        rotationSpeed: randomBetween(-4, 4),
+        wobble: randomBetween(0.8, 2.6),
+        wobbleSpeed: randomBetween(0.025, 0.07),
         wobbleOffset: Math.random() * Math.PI * 2,
-        opacity: randomBetween(0.55, 0.95),
+        opacity: randomBetween(0.6, 1),
         shape,
         // For ribbons
-        width: randomBetween(3, 6),
-        height: randomBetween(10, 18),
+        width: isCelebration ? randomBetween(4, 8) : randomBetween(3, 6),
+        height: isCelebration ? randomBetween(12, 24) : randomBetween(10, 18),
     };
 }
 
@@ -54,8 +64,20 @@ function drawStar(ctx, cx, cy, size) {
     ctx.fill();
 }
 
-export default function Particles() {
+function drawSparkle(ctx, cx, cy, size) {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - size);
+    ctx.quadraticCurveTo(cx, cy, cx + size, cy);
+    ctx.quadraticCurveTo(cx, cy, cx, cy + size);
+    ctx.quadraticCurveTo(cx, cy, cx - size, cy);
+    ctx.quadraticCurveTo(cx, cy, cx, cy - size);
+    ctx.closePath();
+    ctx.fill();
+}
+
+export default function Particles({ variant = "default" }) {
     const canvasRef = useRef(null);
+    const isCelebration = variant === "celebration";
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -73,10 +95,13 @@ export default function Particles() {
         window.addEventListener("resize", resize);
 
         // Initial burst
-        const count = Math.min(Math.floor((canvas.width * canvas.height) / 8000), 100);
+        const densityDivisor = isCelebration ? 5000 : 8000;
+        const maxLimit = isCelebration ? 160 : 100;
+        const count = Math.min(Math.floor((canvas.width * canvas.height) / densityDivisor), maxLimit);
+        
         for (let i = 0; i < count; i++) {
-            const p = createConfetti(canvas);
-            p.y = Math.random() * canvas.height; // spread across screen initially
+            const p = createConfetti(canvas, isCelebration);
+            p.y = Math.random() * canvas.height;
             pieces.push(p);
         }
 
@@ -84,9 +109,11 @@ export default function Particles() {
             tick++;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Slowly add new confetti
-            if (tick % 12 === 0 && pieces.length < 120) {
-                pieces.push(createConfetti(canvas));
+            // Add new celebration confetti
+            const addRate = isCelebration ? 8 : 12;
+            const maxPieces = isCelebration ? 180 : 120;
+            if (tick % addRate === 0 && pieces.length < maxPieces) {
+                pieces.push(createConfetti(canvas, isCelebration));
             }
 
             pieces.forEach((p) => {
@@ -118,6 +145,8 @@ export default function Particles() {
                     drawStar(ctx, 0, 0, p.size / 2);
                 } else if (p.shape === "ribbon") {
                     ctx.fillRect(-p.width / 2, -p.height / 2, p.width, p.height);
+                } else if (p.shape === "sparkle" || p.shape === "trophy_glow") {
+                    drawSparkle(ctx, 0, 0, p.size);
                 }
 
                 ctx.restore();
@@ -131,7 +160,7 @@ export default function Particles() {
             cancelAnimationFrame(animId);
             window.removeEventListener("resize", resize);
         };
-    }, []);
+    }, [isCelebration]);
 
     return (
         <canvas

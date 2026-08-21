@@ -47,7 +47,7 @@ export default function LuckyWinnersPage() {
     );
 
     return (
-        <PreLauncherLayout wide={true} topbarPosition="top" footer={footerContent}>
+        <PreLauncherLayout wide={true} topbarPosition="top" footer={footerContent} particleVariant="celebration">
             <div className="flex-1 flex flex-col py-4 max-w-4xl mx-auto w-full space-y-6">
 
                 {/* Back to Dashboard Navigation Link */}

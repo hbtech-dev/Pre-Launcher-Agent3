@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Particles from "./Particles";
 
-export default function PreLauncherLayout({ children, showBack = false, backUrl = "/welcome", wide = false, topbarPosition = "top", footer = null }) {
+export default function PreLauncherLayout({ children, showBack = false, backUrl = "/welcome", wide = false, topbarPosition = "top", footer = null, particleVariant = "default" }) {
     const [theme, setTheme] = useState(() => {
         if (typeof window !== "undefined") {
             return localStorage.getItem("pl_theme") || "dark";
@@ -30,7 +30,7 @@ export default function PreLauncherLayout({ children, showBack = false, backUrl 
 
     return (
         <div className={`pl-app pl-theme-${theme}`} suppressHydrationWarning>
-            <Particles />
+            <Particles variant={particleVariant} />
             <div className={`pl-container ${wide ? "pl-container--dashboard" : ""}`} style={{ position: "relative", zIndex: 1 }}>
                 {/* Top Header Bar with Logo and Theme Switch */}
                 {topbarPosition === "top" && (
