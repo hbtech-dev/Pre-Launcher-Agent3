@@ -18,7 +18,7 @@ export default function WelcomePage() {
     useEffect(() => {
         const interval = setInterval(() => {
             setWordIndex((prev) => (prev + 1) % ACTION_WORDS.length);
-        }, 2000);
+        }, 2400);
         return () => clearInterval(interval);
     }, []);
 
