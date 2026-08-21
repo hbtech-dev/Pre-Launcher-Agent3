@@ -92,7 +92,7 @@ export default function RootLayout({ children }) {
               (function() {
                 try {
                   var saved = localStorage.getItem('pl_theme');
-                  var theme = saved ? saved : 'light';
+                  var theme = saved ? saved : 'dark';
                   document.documentElement.classList.remove('pl-theme-dark', 'pl-theme-light');
                   document.documentElement.classList.add('pl-theme-' + theme);
                   document.documentElement.setAttribute('data-theme', theme);

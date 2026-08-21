@@ -5,6 +5,9 @@
    ============================================================ */
 
 /* ---- Theme Variables ---- */
+:root,
+html.pl-theme-dark,
+html[data-theme="dark"],
 .pl-theme-dark {
   --pl-bg-primary: #07090e;
   --pl-bg-secondary: #0f1422;
@@ -32,6 +35,8 @@
   --pl-error: #ef4444;
 }
 
+html.pl-theme-light,
+html[data-theme="light"],
 .pl-theme-light {
   --pl-bg-primary: #f8fafc;
   --pl-bg-secondary: #f1f5f9;

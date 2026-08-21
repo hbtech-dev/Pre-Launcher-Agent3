@@ -20,9 +20,8 @@ html, body {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
-  background-color: #f8fafc;
-  color: #0f172a;
-  transition: background-color 0.15s ease;
+  background-color: var(--pl-bg-primary, #07090e);
+  color: var(--pl-text-primary, #ffffff);
 }
 
 html.pl-theme-dark,

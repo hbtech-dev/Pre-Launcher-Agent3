@@ -5,10 +5,15 @@ import Link from "next/link";
 import Particles from "./Particles";
 
 export default function PreLauncherLayout({ children, showBack = false, backUrl = "/welcome", wide = false, topbarPosition = "top", footer = null }) {
-    const [theme, setTheme] = useState("light");
+    const [theme, setTheme] = useState(() => {
+        if (typeof window !== "undefined") {
+            return localStorage.getItem("pl_theme") || "dark";
+        }
+        return "dark";
+    });
 
     useEffect(() => {
-        const saved = localStorage.getItem("pl_theme") || "light";
+        const saved = localStorage.getItem("pl_theme") || "dark";
         setTheme(saved);
         document.documentElement.classList.remove("pl-theme-dark", "pl-theme-light");
         document.documentElement.classList.add("pl-theme-" + saved);
