@@ -548,7 +548,11 @@ export default function HomePage() {
 
                 {/* Footer */}
                 <div className="text-center pt-6 pb-4 border-t" style={{ borderColor: "var(--pl-border-subtle)" }}>
-                    <div className="flex justify-center gap-4 mb-2 text-xs">
+                    <div className="flex justify-center items-center gap-4 mb-2 text-xs flex-wrap">
+                        <Link href="/winners" className="pl-link hover:underline text-[#8C56FC] font-semibold flex items-center gap-1" style={{ fontSize: "11px", textDecoration: "none" }}>
+                            <span>🏆 Lucky Winners</span>
+                        </Link>
+                        <span className="text-[var(--pl-text-muted)] opacity-40 text-[11px]">•</span>
                         <Link href="/privacy" target="_blank" className="pl-link hover:underline text-[var(--pl-text-muted)]" style={{ color: "var(--pl-text-muted)", fontSize: "11px", textDecoration: "none" }}>
                             Privacy Policy &amp; Data Protection
                         </Link>

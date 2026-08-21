@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import {
     Sparkles,
     X,
@@ -623,6 +624,22 @@ export default function LuckyWheel({ isVerified = false, onOpenVerification }) {
                                     Rs 2500 Cash 💰
                                 </span>
                             </div>
+                        </div>
+
+                        {/* Hall of Winners Link Bar */}
+                        <div className="mt-2.5 pt-2 border-t border-[var(--pl-border-subtle)] flex items-center justify-between text-xs px-1">
+                            <div className="flex items-center gap-1.5 text-[var(--pl-text-muted)] text-[11px]">
+                                <Trophy className="w-3.5 h-3.5 text-[#f59e0b]" />
+                                <span>Recent Lucky Winners</span>
+                            </div>
+                            <Link
+                                href="/winners"
+                                onClick={() => setIsOpen(false)}
+                                className="inline-flex items-center gap-1 text-[11px] font-bold text-[#8C56FC] hover:text-[#a855f7] hover:underline transition-colors"
+                            >
+                                <span>View Winners List</span>
+                                <ArrowRight className="w-3 h-3" />
+                            </Link>
                         </div>
                     </div>
                 </div>

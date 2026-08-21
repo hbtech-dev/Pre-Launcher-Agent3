@@ -274,6 +274,9 @@ export const luckyWheelAPI = {
   },
   getMyReward: async () => {
     return performAuthRequest('/api/v1/lucky-wheel/my-reward', 'GET');
+  },
+  getWinners: async (page = 1, limit = 20) => {
+    return performGetRequest(`/api/v1/lucky-wheel/winners?page=${page}&limit=${limit}`);
   }
 };
 
